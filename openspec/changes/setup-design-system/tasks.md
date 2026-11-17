@@ -216,9 +216,9 @@
 
 ## 10. Final checks and Applied
 
-- [ ] 10.1 Run the fresh-clone check: clone the local repository into a temporary directory, check out the branch, and run `npm ci`, `npm run typecheck`, `npm run lint`, and `npm test` with no `.env` and no dev server. Verify: all four exit 0. Delete the clone afterwards.
-- [ ] 10.2 Run `npx expo-doctor` on the final tree, and check that `grep -rnE "'#[0-9a-fA-F]{3,8}'" app src --include='*.ts*' | grep -v '^src/theme/'` prints nothing. Verify: both are clean, and every earlier task in this file is checked.
-- [ ] 10.3 Tick Applied for entry 2 in `ROADMAP.md`, and commit it with the final `tasks.md` as `docs: tick Applied for setup-design-system`. Verify: `git status --short` is clean, and `git log --oneline main..HEAD` shows the commits listed in design D16.
+- [x] 10.1 Run the fresh-clone check: clone the local repository into a temporary directory, check out the branch, and run `npm ci`, `npm run typecheck`, `npm run lint`, and `npm test` with no `.env` and no dev server. Verify: all four exit 0. Delete the clone afterwards.
+- [x] 10.2 Run `npx expo-doctor` on the final tree, and check that `grep -rnE "'#[0-9a-fA-F]{3,8}'" app src --include='*.ts*' | grep -v '^src/theme/'` prints nothing. Verify: both are clean, and every earlier task in this file is checked.
+- [x] 10.3 Tick Applied for entry 2 in `ROADMAP.md`, and commit it with the final `tasks.md` as `docs: tick Applied for setup-design-system`. Verify: `git status --short` is clean, and `git log --oneline main..HEAD` shows the commits listed in design D16.
 
 ## Workflow follow-up
 
