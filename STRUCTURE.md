@@ -91,11 +91,11 @@ dayspoken/
 - **Business rules live on the server:** quotas, AI calls, and validating AI output belong to Edge Functions, database constraints, and RLS. The app never calls AI directly.
 - **State has two homes:** server data lives only in TanStack Query. Zustand holds UI state only (the recording flow, preferences).
 - **`src/ui` is pure UI:** it never fetches data and holds no business logic.
-- **Features stay isolated:** a feature imports another only through that feature's `index.ts`.
+- **Features stay isolated:** a feature imports another only through that feature's `index.ts`. ESLint rejects deep imports such as `@/features/auth/components/X`.
 - **No hex colors in components:** every color comes from a semantic token.
 - **One source of data types:** the TypeScript types generated from the database.
 - **Stable error codes:** server errors use codes (`QUOTA_EXCEEDED`, `TRANSCRIPTION_FAILED`, …) that are mapped to UI messages in one place.
-- **Secrets stay on the server:** the Gemini key and SMTP credentials live only in Supabase. The app only holds public values (`EXPO_PUBLIC_*`).
+- **Secrets stay on the server:** the Gemini key and SMTP credentials live only in Supabase. The app only holds public values (`EXPO_PUBLIC_*`), and reads them only through `src/lib/env.ts`. ESLint rejects `process.env` anywhere else in `app/` and `src/`.
 
 ## Data flows
 
@@ -184,6 +184,8 @@ The app shows the answer with source cards that open the cited entries.
 ### Config and secrets
 
 - **The app only holds public values** (`EXPO_PUBLIC_*`).
+  - They are read and validated in `src/lib/env.ts`. An invalid value fails with an error that names the variable.
+  - Every variable is documented in `.env.example`. Local `.env` and `.env*.local` files are not committed.
 - **Secrets live only as Supabase secrets** (Gemini key, SMTP credentials).
 - **AI config.** All AI calls go through the AI adapter in `supabase/functions/_shared/ai-adapter/`. It is configured per environment: the provider, plus a model per task (`process-entry` and `ask` separately).
 - **Separate projects.** Development and production use separate Google projects, because AI limits are per project.
@@ -197,12 +199,24 @@ The app shows the answer with source cards that open the cited entries.
 - TypeScript types are generated from the database and are the single source of data types.
 - Audio lives in a private bucket at `audio/{user_id}/{entry_id}.m4a`, compressed to about 32 kbps mono, and is played through expiring signed URLs.
 
+### Imports
+
+- **`@/` points to `src/`.** For example `@/lib/env`.
+- **Inside a feature,** use relative imports.
+- **Another feature** is imported only through its `index.ts` (`@/features/auth`).
+
 ### Testing
 
 - **Unit and component tests:** Jest and React Native Testing Library. Each test sits next to the file it tests.
+- **Route tests are the exception.** Expo Router treats every file in `app/` as a route, so route tests live in `__tests__/app/` and mirror the route path (`__tests__/app/index.test.tsx`).
 - **Edge Functions:** Deno tests.
 - **End-to-end:** Maestro flows live in `e2e/`.
-- **CI:** GitHub Actions runs typecheck, lint, and tests. CI must be green before merging.
+- **Check scripts:**
+  - `npm run typecheck`: TypeScript in strict mode.
+  - `npm run lint`: ESLint, with Prettier formatting reported as lint errors.
+  - `npm test`: Jest.
+  - `npm run format`: rewrites files with Prettier. Markdown docs and `openspec/` are not formatted.
+- **CI:** GitHub Actions runs typecheck, lint, and tests on every pull request to `main` and every push to `main`, with the Node version from `.nvmrc`. CI must be green before merging.
 
 ## Naming conventions
 
@@ -212,7 +226,7 @@ The app shows the answer with source cards that open the cited entries.
 | Hook file | camelCase starting with `use` | `useEntries.ts` |
 | Other file | kebab-case | `query-keys.ts`, `local-date.ts` |
 | Route file | lowercase kebab-case | `sign-in.tsx`, `delete-account.tsx` |
-| Test | next to the tested file | `local-date.test.ts`, `EntryCard.test.tsx` |
+| Test | next to the tested file; route tests in `__tests__/app/` | `local-date.test.ts`, `EntryCard.test.tsx` |
 | Database table/column | snake_case, plural tables | `entries`, `ask_logs`, `local_date` |
 | Edge Function folder | kebab-case | `process-entry/` |
 | Type | PascalCase, no `I` prefix | `Entry`, `MoodLevel` |
@@ -227,11 +241,18 @@ OpenSpec change -> branch -> implement + commits -> push -> PR + green CI -> mer
 ```
 
 - **One branch per change:** `feat/<change-name>`, merged into `main` through a pull request.
+- **The plan travels with the change.** The change's folder `openspec/changes/<change-name>/` is committed on its branch, so the pull request shows the plan next to the code.
 - **Commits:** Conventional Commits (`feat:`, `fix:`, `chore:` …).
 - **CI must be green** before merging.
+- **Merging:** use "Create a merge commit", then delete the branch.
 - **Archiving:** after the merge, the change is archived, and the archive edits are committed to `main` as `chore(openspec): archive <change-name>`.
 - **Package manager:** npm.
-- **The project owner is new to pull requests.** The agent runs the `git` and `gh` commands and explains each step in plain Indonesian. The first full walkthrough happens in `setup-project-foundation`. The owner needs a GitHub account and must run `gh auth login` once.
+- **Who does what.** The project owner is new to pull requests.
+  - The agent runs the local `git` commands (branch, commit, push).
+  - The owner does the GitHub steps in the browser: opening the pull request, watching CI, and merging.
+  - The agent explains every step in plain Indonesian.
+  - The first full walkthrough happens in `setup-project-foundation`.
+  - There is no GitHub CLI login. The agent reads pull request and CI status through the public GitHub API.
 
 ## Language
 

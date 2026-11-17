@@ -122,10 +122,10 @@ operations:
       - "Talk to the user in Bahasa Indonesia. Write code, comments, commits, and docs in English."
       - "At the start, find this change in ROADMAP.md and tick Proposed and Reviewed. The user's request to apply is the review approval; if it is unclear that the user reviewed the artifacts, ask first."
       - "From setup-project-foundation onward, work on a branch named feat/<change-name> created from main, and use Conventional Commits."
-      - "The user is new to Git and pull requests. Run the git and gh commands yourself and explain each step (branch, commit, push, PR, CI, merge) in plain Indonesian. setup-project-foundation starts with the initial commit of the blueprint files on main and gives the full first-PR walkthrough."
+      - "The user is new to Git and pull requests. Run the local git commands (branch, commit, push) yourself. The user does the GitHub steps (open the PR, watch CI, merge) in the browser; there is no GitHub CLI login. Explain every step in plain Indonesian, and read PR and CI status through the public GitHub API. setup-project-foundation starts with the initial commit of the blueprint files on main and gives the full first-PR walkthrough."
       - "Follow STRUCTURE.md. Never put secrets in the app, never call AI providers from the app, and ask the user before adding any paid service."
       - "Run typecheck, lint, and tests before calling the work done."
-      - "When every task is checked and the checks pass, tick Applied in ROADMAP.md, push the branch, open the PR with gh, and guide the user through green CI and merging."
+      - "When every task is checked and the checks pass, tick Applied in ROADMAP.md, push the branch, then guide the user through opening the PR in the browser, green CI, and merging."
       - "Do not expand scope. If new work appears, suggest a new ROADMAP.md entry instead of doing it."
       - "project-blueprint itself makes no branch and no commit."
   archive:

@@ -50,9 +50,9 @@ Out of scope: any app code, dependencies, Expo or Supabase setup (setup-project-
 
 ### 1. setup-project-foundation
 
-- [ ] Proposed
-- [ ] Reviewed
-- [ ] Applied
+- [x] Proposed
+- [x] Reviewed
+- [x] Applied
 - [ ] Archived
 
 **Scope:** Expo app scaffold, folder structure, lint and test setup, GitHub repository with CI, and the user's first guided pull request.
