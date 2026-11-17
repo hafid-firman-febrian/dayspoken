@@ -140,8 +140,8 @@
 
 ## 7. Text field and code input
 
-- [ ] 7.1 Build **TextField** with tests: the visible label is the accessible name, the error message is shown with an icon in a live region, it is disabled, and it is multiline. The inside-a-sheet input switch comes in 8.6. Verify: `npm test` passes.
-- [ ] 7.2 Write the **CodeInput** tests first, then build it (design D8):
+- [x] 7.1 Build **TextField** with tests: the visible label is the accessible name, the error message is shown with an icon in a live region, it is disabled, and it is multiline. The inside-a-sheet input switch comes in 8.6. Verify: `npm test` passes.
+- [x] 7.2 Write the **CodeInput** tests first, then build it (design D8):
   - typing six digits fills six cells and calls `onComplete` once with the string
   - pasting "123456" completes
   - "12a4 56" keeps "12456"
@@ -151,8 +151,8 @@
   - `textContentType="oneTimeCode"` and `autoComplete="one-time-code"` are set
 
   Verify: the tests fail before the component exists and pass after.
-- [ ] 7.3 Export both from `src/ui/index.ts`. Verify: `npm run typecheck` passes.
-- [ ] 7.4 Commit `feat(ui): add text field and code input`. Verify: `git status --short` is clean.
+- [x] 7.3 Export both from `src/ui/index.ts`. Verify: `npm run typecheck` passes.
+- [x] 7.4 Commit `feat(ui): add text field and code input`. Verify: `git status --short` is clean.
 
 ## 8. Feedback and overlay components
 

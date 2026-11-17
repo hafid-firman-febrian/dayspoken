@@ -3,10 +3,12 @@
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button';
 export { Card, type CardProps } from './Card';
 export { Chip, type ChipProps } from './Chip';
+export { CodeInput, type CodeInputProps } from './CodeInput';
 export { Icon, type IconProps, type IconTone } from './Icon';
 export { IconButton, type IconButtonProps, type IconButtonVariant } from './IconButton';
 export { Screen, type ScreenProps } from './Screen';
 export { SectionHeader, type SectionHeaderProps } from './SectionHeader';
 export { Skeleton, type SkeletonProps, type SkeletonShape } from './Skeleton';
 export { Text, type TextProps, type TextVariant } from './Text';
+export { TextField, type TextFieldProps } from './TextField';
 export type { TextTone } from './text-tone-context';
