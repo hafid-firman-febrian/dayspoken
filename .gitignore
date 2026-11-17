@@ -1,0 +1,6 @@
+# Local AI agent folders (kept on this machine only)
+/.claude/
+/.agents/
+
+# macOS
+.DS_Store

@@ -1,0 +1,137 @@
+schema: spec-driven
+
+context: |
+  App: Dayspoken, a voice journal mobile app and a portfolio project for Upwork.
+  The user talks for 1-3 minutes a day. AI turns each recording into a journal entry
+  (transcript, title, summary, mood 1-5, tags) that can be browsed, searched, and
+  asked about, with answers that cite the source entries.
+
+  Problem: journaling feels like work, and old entries are never reread.
+  Persona: busy professionals (25-40) who tried journaling and quit.
+  Hero demo: "ask your past self", for example "When was I last stressed about work?"
+  Two audiences: the in-app user, and the Upwork client who judges the demo, repo, and APK.
+  Portfolio signal: an AI-powered mobile app (speech-to-text, LLM, semantic search/RAG)
+  that feels production-grade (real auth, clear error states, safe data).
+
+  Hard constraints:
+  - React Native + Expo. Development comes first; a store release is a later phase.
+  - Production must cost Rp 0: official free tiers only (Supabase Free, Gemini API free
+    tier, free SMTP, Sentry free, GitHub Actions, EAS free tier or local builds).
+    Ask the user before adding any paid service.
+  - Distribution: an Android APK on GitHub Releases. iOS is shown in the demo video only.
+  - UI copy is in English. Recordings can be in any language (auto-detected), and each
+    entry is written in the language that was spoken.
+  - Talk to the user in Bahasa Indonesia. Write code, comments, commits, OpenSpec
+    artifacts, the README, and docs in English.
+
+  Product decisions (MVP):
+  - Capture: Home -> Record -> upload -> Processing -> entry ready -> optional light
+    edit -> Home.
+  - Recording: max 3:00 with a warning at 2:30 then auto-stop, min about 10 s,
+    pause/resume, one optional prompt.
+  - Processing statuses: uploading -> transcribing -> analyzing -> ready | failed (with
+    retry). The user may leave the Processing screen ("Continue in background").
+  - Several entries per day. Timelines are grouped by local_date (the user's day from
+    the device timezone). Streak = days with at least one entry.
+  - Ask: one question, one answer, with citations ({entry_id, quote}) verified by the
+    server. No chat in the MVP.
+  - Quotas are server-side configuration (plan_limits), never hardcoded. Free: 3
+    recordings + 5 Ask questions per user per day, plus a global daily cap for the
+    whole app. When a limit is reached, show a friendly message.
+  - Auth: email OTP (6 digits) via free SMTP. A "Try the demo" account with about 20
+    seeded entries, reset nightly.
+  - Audio is kept for playback (about 32 kbps mono, private bucket, signed URLs).
+  - Offline: recording needs a connection. Cached data stays readable, an offline
+    banner is shown, and local audio is kept until its upload succeeds.
+  - Privacy notice (onboarding + Settings) that audio is processed by Google Gemini's
+    free tier, plus a privacy policy page on GitHub Pages.
+  - Screens: Welcome, Sign In, Verify Code, Home, Journal (search + filter), Ask,
+    Settings, Record (full-screen modal, always dark), Processing, Entry Detail, Edit
+    Entry sheet, Filter sheet, Delete Account. Should: App Lock.
+    Empty/loading/error/offline/quota are states of each screen, not separate screens.
+  - Navigation: a floating pill tab bar (Home, Journal, Ask, Settings) with a raised
+    center record button.
+
+  Visual system: "Mono + Mood" layout, palette "Tomato", Geist font, Lucide icons.
+  NativeWind with semantic tokens (background, surface, foreground, muted, border,
+  primary, on-primary, accent, mood 1-5), defined once per mode. Light/dark follows
+  the system, with a manual override. A mood is never shown by color alone.
+  Text contrast is at least 4.5:1. The Record screen has an animated VoiceOrb.
+  The token values are in ROADMAP.md (setup-design-system).
+  The rejected "Warm Journal" look (cream, serif, terracotta) must not come back.
+
+  Stack:
+  - App: Expo SDK (latest stable at setup), TypeScript strict, Expo Router, development
+    build (expo-dev-client), npm. Libraries: expo-audio, Reanimated, react-native-skia,
+    TanStack Query, Zustand, Zod, MMKV, @gorhom/bottom-sheet, lucide-react-native,
+    expo-notifications (local), expo-local-authentication.
+  - Backend: Supabase (Postgres + pgvector, Auth, Storage, Edge Functions on Deno,
+    Realtime, cron), Supabase CLI, SQL migrations, generated DB types.
+  - AI: the Gemini API free tier (Flash models) for transcription, entry analysis, Ask,
+    and embeddings, behind an AI adapter configured per environment (provider + model
+    per task). Embeddings always come from one model. Development and production use
+    separate Google projects. The app never calls AI providers. A Cloudflare fallback
+    is Later.
+  - Quality: Jest + React Native Testing Library, Maestro E2E, Deno tests, ESLint +
+    Prettier, GitHub Actions CI (typecheck, lint, test), Sentry (free).
+
+  Structure rules (details in STRUCTURE.md):
+  - app/ holds thin Expo Router routes. src/features/<feature>/ holds components, hooks,
+    api.ts, types.ts, and index.ts (its public API). src/ui holds base components (no
+    business logic, no data fetching). Also src/theme, src/lib, src/utils (pure
+    functions), supabase/ (migrations, functions/_shared, seed.sql), e2e/, docs/.
+  - Business rules, quotas, and all AI calls live on the server (Edge Functions, DB
+    constraints, RLS on every table).
+  - Server data lives only in TanStack Query. Zustand holds UI state only.
+  - Features import each other only through index.ts.
+  - No hex colors in components; use semantic tokens.
+  - Generated DB types are the single source of data types.
+  - Server errors use stable codes, mapped to UI messages in one place.
+  - The app only holds EXPO_PUBLIC_* values. Secrets live only in Supabase.
+
+  Workflow: ROADMAP.md lists the changes in order, with propose prompts. One OpenSpec
+  change = one branch (feat/<change-name>) = one PR. Use Conventional Commits. CI must
+  be green before merging. The user is new to Git and pull requests.
+
+  Verify at implementation time (do not assume): Gemini free-tier quotas and data terms;
+  Cloudflare Workers AI quotas; Expo SDK vs NativeWind compatibility; Geist availability
+  for expo-font; Supabase Free pause policy and SMTP limits; EAS free build limits.
+
+rules:
+  proposal:
+    - "Name the ROADMAP.md entry this change implements (number and name) and stay within its scope."
+    - "Always include an explicit Out of scope list."
+    - "State the cost impact of any new service or dependency; production must stay at Rp 0."
+    - "If the change alters an agreed decision, say so and list which of STRUCTURE.md, ROADMAP.md, and openspec/config.yaml it updates."
+  design:
+    - "Follow the layering in STRUCTURE.md; justify any deviation."
+    - "Name every new dependency with its reason and its free-tier status."
+    - "UI uses semantic tokens and src/ui base components, and covers the empty, loading, error, offline, and quota-reached states."
+    - "Data changes go through SQL migrations in supabase/migrations, with RLS on every table; secrets live only in Supabase."
+    - "AI calls go only through the AI adapter, and model output is validated with Zod."
+    - "List any free-tier facts (quotas, limits, terms) that must be verified against official pages."
+  tasks:
+    - "Keep tasks small and in dependency order; each task states how it is verified."
+    - "Tests land in the same group as the code they cover (Jest + React Native Testing Library, Deno tests for Edge Functions, Maestro flows once e2e/ exists)."
+    - "Include updates to STRUCTURE.md, ROADMAP.md, or openspec/config.yaml when the change alters them."
+    - "Do not add tasks outside the scope of the ROADMAP.md entry."
+
+operations:
+  apply:
+    guidance:
+      - "Talk to the user in Bahasa Indonesia. Write code, comments, commits, and docs in English."
+      - "At the start, find this change in ROADMAP.md and tick Proposed and Reviewed. The user's request to apply is the review approval; if it is unclear that the user reviewed the artifacts, ask first."
+      - "From setup-project-foundation onward, work on a branch named feat/<change-name> created from main, and use Conventional Commits."
+      - "The user is new to Git and pull requests. Run the git and gh commands yourself and explain each step (branch, commit, push, PR, CI, merge) in plain Indonesian. setup-project-foundation starts with the initial commit of the blueprint files on main and gives the full first-PR walkthrough."
+      - "Follow STRUCTURE.md. Never put secrets in the app, never call AI providers from the app, and ask the user before adding any paid service."
+      - "Run typecheck, lint, and tests before calling the work done."
+      - "When every task is checked and the checks pass, tick Applied in ROADMAP.md, push the branch, open the PR with gh, and guide the user through green CI and merging."
+      - "Do not expand scope. If new work appears, suggest a new ROADMAP.md entry instead of doing it."
+      - "project-blueprint itself makes no branch and no commit."
+  archive:
+    guidance:
+      - "Archive a change only after its pull request is merged into main. project-blueprint is the exception: archive it right after apply, without a PR."
+      - "Before archiving, switch to main and pull the latest changes (skip the pull while the repository has no GitHub remote, as with project-blueprint)."
+      - "Tick Archived for the change in ROADMAP.md as part of the archive run."
+      - "Commit the archive edits on main as 'chore(openspec): archive <change-name>' and push. project-blueprint makes no commit, because its files go into the initial commit of setup-project-foundation."
+      - "Summarize the archive result to the user in Bahasa Indonesia."
