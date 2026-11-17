@@ -57,7 +57,7 @@
 
 ## 8. Cloud project (owner steps, agent guides each one in Indonesian)
 
-- [ ] 8.1 Owner confirms a free project slot and creates the project in the Supabase dashboard (region Southeast Asia (Singapore) unless the owner chooses another); verify the project shows as active on the Free plan and the owner has saved the database password
+- [x] 8.1 Owner confirms a free project slot and creates the project in the Supabase dashboard (region Southeast Asia (Singapore) unless the owner chooses another); verify the project shows as active on the Free plan and the owner has saved the database password
 - [x] 8.2 Owner runs `npx supabase login` and `npx supabase link --project-ref <ref>` (password typed by the owner, never pasted into chat or a file); verify `npx supabase migration list --remote` shows the local migrations and none remote
 - [x] 8.3 Owner runs `npx supabase db push --remote` (in CLI v3 `db` commands target the local stack unless `--remote` is given); verify `npx supabase migration list --remote` shows every migration on both sides, the dashboard shows the four tables with RLS on, the bucket `audio` as private, and the `vector` extension enabled
 - [x] 8.4 Run the anonymous checks against the cloud project with the publishable key from the dashboard (table read returns no rows or an error, `ping` returns `ok`); verify both outputs
