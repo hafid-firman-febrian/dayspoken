@@ -194,25 +194,25 @@
 
 ## 9. Development-only component gallery
 
-- [ ] 9.1 Build `src/ui/gallery/` (design D13), with one section per base component and for the tokens:
+- [x] 9.1 Build `src/ui/gallery/` (design D13), with one section per base component and for the tokens:
   - type scale, color swatches with their names and values, mood scale with labels, Record palette
   - the System/Light/Dark switch on `useThemeMode`
   - a forced-dark sample in `ThemeScope`
   - buttons that open a BottomSheet (with a TextField), a Dialog, and a Toast
 
   Verify: `npm run typecheck` and `npm run lint` pass (no hex literals; values come from `tokens.ts`).
-- [ ] 9.2 Add `app/dev/gallery.tsx` (thin, redirects to `/` when `!__DEV__`). Rebuild `app/index.tsx` with `Screen` and `Text`, keeping its texts, and show a `Link` to `/dev/gallery` only in `__DEV__`. Write `__tests__/app/dev/gallery.test.tsx` with `renderRouter`:
+- [x] 9.2 Add `app/dev/gallery.tsx` (thin, redirects to `/` when `!__DEV__`). Rebuild `app/index.tsx` with `Screen` and `Text`, keeping its texts, and show a `Link` to `/dev/gallery` only in `__DEV__`. Write `__tests__/app/dev/gallery.test.tsx` with `renderRouter`:
   - every section title renders
   - with `__DEV__` set to `false`, the route ends on `/`
 
   Extend `__tests__/app/index.test.tsx`: the link shows in development and is absent with `__DEV__` set to `false`. Verify: `npm test` passes.
-- [ ] 9.3 On the device, open the gallery from the placeholder link and check:
+- [x] 9.3 On the device, open the gallery from the placeholder link and check:
   - every section in Light and in Dark, with no white flash and no system-font text
   - the forced-dark sample stays dark in Light
   - Dark persists after a restart
   - System follows the device appearance again
-- [ ] 9.4 Update `STRUCTURE.md`: add `app/dev/gallery.tsx` (development only) to the routes table, and `src/ui/gallery/` as the one composed screen inside `src/ui`. Verify: `git diff STRUCTURE.md` shows only these points.
-- [ ] 9.5 Commit `feat(ui): add dev-only component gallery`. Verify: `git status --short` is clean.
+- [x] 9.4 Update `STRUCTURE.md`: add `app/dev/gallery.tsx` (development only) to the routes table, and `src/ui/gallery/` as the one composed screen inside `src/ui`. Verify: `git diff STRUCTURE.md` shows only these points.
+- [x] 9.5 Commit `feat(ui): add dev-only component gallery`. Verify: `git status --short` is clean.
 
 ## 10. Final checks and Applied
 

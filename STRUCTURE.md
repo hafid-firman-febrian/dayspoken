@@ -78,6 +78,8 @@ dayspoken/
 
 - S11 Edit Entry and S12 Filter are bottom sheets, not routes.
 - S14 App Lock (Should) is a gate shown when the app opens.
+- `app/dev/gallery.tsx` is the component gallery: every base component, its states, and the design tokens, in light and dark. It is for development only: in a production build it redirects to the home route, and the home placeholder shows its link only in development. It renders `ComponentGallery` from `src/ui/gallery/`.
+- `src/ui/gallery/` is the one place in `src/ui` that composes base components into a screen. It belongs to the design system, holds no business logic, fetches nothing, and is not exported from `@/ui`. Its theme switch is the real theme-mode preference.
 
 ## Where logic lives
 
