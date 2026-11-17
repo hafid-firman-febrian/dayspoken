@@ -76,7 +76,7 @@ Out of scope: NativeWind, theme and UI components (setup-design-system); Supabas
 - [x] Proposed
 - [x] Reviewed
 - [x] Applied
-- [ ] Archived
+- [x] Archived
 
 **Scope:** NativeWind with the Tomato semantic tokens (light/dark), Geist, theme mode, every base UI component, and a dev-only component gallery.
 
