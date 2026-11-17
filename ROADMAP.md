@@ -131,9 +131,9 @@ Out of scope: feature UI such as FloatingTabBar, TodayCard, WeekMoodStrip, Voice
 
 ### 3. setup-supabase-backend
 
-- [ ] Proposed
-- [ ] Reviewed
-- [ ] Applied
+- [x] Proposed
+- [x] Reviewed
+- [x] Applied
 - [ ] Archived
 
 **Scope:** Supabase project (local and cloud), migrations, RLS, private audio bucket, generated types, app client, and the keep-alive ping.
