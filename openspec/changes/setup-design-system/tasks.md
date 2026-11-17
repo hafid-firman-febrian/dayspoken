@@ -15,13 +15,13 @@
 
 ## 2. NativeWind compatibility spike (gate)
 
-- [ ] 2.1 Recheck `npm view nativewind dist-tags` and the NativeWind install page. If `latest` is still 4.x, install it (design D1, D15):
+- [x] 2.1 Recheck `npm view nativewind dist-tags` and the NativeWind install page. If `latest` is still 4.x, install it (design D1, D15):
   - `npm i nativewind@<latest 4.x>` and `npm i -D tailwindcss@^3.4.17`
   - `npx expo install react-native-reanimated react-native-worklets expo-system-ui`
   - `npx expo install babel-preset-expo -- --save-dev`
 
   Verify: `npx expo-doctor` reports no failed checks, and `npm ls nativewind tailwindcss react-native-reanimated` shows no peer errors.
-- [ ] 2.2 Add the build config:
+- [x] 2.2 Add the build config:
   - `babel.config.js` with `babel-preset-expo` (`jsxImportSource: 'nativewind'`) and `nativewind/babel`
   - `metro.config.js` with `withNativeWind(config, { input: './src/theme/global.css', inlineRem: 16 })`
   - `src/theme/global.css` with the three `@tailwind` directives
@@ -30,7 +30,7 @@
   - `tailwind.config.ts`, which imports it (design D2)
 
   Set `userInterfaceStyle` to `"automatic"` in `app.json`. Verify: `npm run typecheck`, `npm run lint`, and `npm test` all pass with the new Babel config.
-- [ ] 2.3 Add a temporary probe to `app/index.tsx`:
+- [x] 2.3 Add a temporary probe to `app/index.tsx`:
   - a root `View` with `vars()` for the light or dark values, and a button that toggles between them
   - a `bg-surface p-5` box
   - a button that opens a React Native `Modal` holding another `bg-surface` box
@@ -42,8 +42,8 @@
   - no red-screen errors
 
   **Gate:** if any check fails, stop and ask the owner (NativeWind v5 RC or Uniwind, design D1).
-- [ ] 2.4 Remove the probe, so `app/index.tsx` is back to the placeholder. Verify: `git diff app/index.tsx` is empty, and `npm test` passes.
-- [ ] 2.5 Commit `chore: add NativeWind with Tailwind CSS`. Verify: `git status --short` is clean.
+- [x] 2.4 Remove the probe, so `app/index.tsx` is back to the placeholder. Verify: `git diff app/index.tsx` is empty, and `npm test` passes.
+- [x] 2.5 Commit `chore: add NativeWind with Tailwind CSS`. Verify: `git status --short` is clean.
 
 ## 3. Design tokens
 
