@@ -45,7 +45,7 @@ Do this group before ticking anything in `ROADMAP.md`.
 ## 5. Development build
 
 - [x] 5.1 Run `npx expo install expo-dev-client`. Verify: `npx expo-doctor` reports no failed checks.
-- [ ] 5.2 Build and run the development build on Android (design D4):
+- [x] 5.2 Build and run the development build on Android (design D4):
   - Export `ANDROID_HOME=$HOME/Library/Android/sdk` for the session. Edit `~/.zshrc` only if the owner agrees.
   - Start an emulator, or connect a USB device.
   - Run `npx expo run:android`.
@@ -87,7 +87,7 @@ Do this group before ticking anything in `ROADMAP.md`.
 
   Verify: the tests fail before the module exists.
 - [x] 8.2 Implement `src/lib/env.ts` (design D9). `parseEnv(raw)` is pure and Zod-validated. `env` is built from an explicit object that reads `process.env.EXPO_PUBLIC_APP_ENV` by static member access. Verify: `npm test`, `npm run typecheck`, and `npm run lint` all pass, and the result is typed as `'development' | 'production'`.
-- [ ] 8.3 Show the environment on the placeholder screen (for example "Environment: development"), and extend `__tests__/app/index.test.tsx` to assert it. Verify:
+- [x] 8.3 Show the environment on the placeholder screen (for example "Environment: development"), and extend `__tests__/app/index.test.tsx` to assert it. Verify:
   - `npm test` passes.
   - With `EXPO_PUBLIC_APP_ENV=production` in `.env`, the development build shows "production" after Metro restarts.
   - Remove `.env` afterwards.
@@ -128,12 +128,12 @@ Do this group before ticking anything in `ROADMAP.md`.
   - `grep -n -w gh openspec/config.yaml` finds nothing.
   - `openspec instructions apply --change setup-project-foundation --json` shows the new guidance.
   - `git diff openspec/config.yaml` touches only those two entries.
-- [ ] 10.3 Commit `docs: update conventions and Git workflow`. Verify: `git status --short` is clean.
+- [x] 10.3 Commit `docs: update conventions and Git workflow`. Verify: `git status --short` is clean.
 
 ## 11. Final checks and Applied
 
-- [ ] 11.1 Run `npm run typecheck`, `npm run lint`, `npm test`, and `npx expo-doctor` on the final tree. Verify: all exit 0, and every earlier task in this file is checked.
-- [ ] 11.2 Tick Applied for entry 1 in `ROADMAP.md`, then commit it with the final `tasks.md` as `docs: tick Applied for setup-project-foundation`. Verify: `git status --short` is clean, and `git log --oneline main..HEAD` shows the nine branch commits listed in design D12.
+- [x] 11.1 Run `npm run typecheck`, `npm run lint`, `npm test`, and `npx expo-doctor` on the final tree. Verify: all exit 0, and every earlier task in this file is checked.
+- [x] 11.2 Tick Applied for entry 1 in `ROADMAP.md`, then commit it with the final `tasks.md` as `docs: tick Applied for setup-project-foundation`. Verify: `git status --short` is clean, and `git log --oneline main..HEAD` shows the nine branch commits listed in design D12.
 
 ## Workflow follow-up
 
