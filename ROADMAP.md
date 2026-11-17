@@ -131,8 +131,8 @@ Out of scope: feature UI such as FloatingTabBar, TodayCard, WeekMoodStrip, Voice
 
 ### 3. setup-supabase-backend
 
-- [ ] Proposed
-- [ ] Reviewed
+- [x] Proposed
+- [x] Reviewed
 - [ ] Applied
 - [ ] Archived
 
