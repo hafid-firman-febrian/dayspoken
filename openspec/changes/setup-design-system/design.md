@@ -293,7 +293,8 @@ Conventional Commits on `feat/setup-design-system`, one per task group. Each gro
 7. `feat(ui): add text field and code input`
 8. `feat(ui): add feedback and overlay components`
 9. `feat(ui): add dev-only component gallery`
-10. `docs: tick Applied for setup-design-system`
+10. `chore: declare css modules for typecheck on a fresh clone` (found by the fresh-clone check in group 10)
+11. `docs: tick Applied for setup-design-system`
 
 ## Risks / Trade-offs
 
