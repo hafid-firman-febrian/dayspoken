@@ -58,18 +58,18 @@
 ## 8. Cloud project (owner steps, agent guides each one in Indonesian)
 
 - [ ] 8.1 Owner confirms a free project slot and creates the project in the Supabase dashboard (region Southeast Asia (Singapore) unless the owner chooses another); verify the project shows as active on the Free plan and the owner has saved the database password
-- [ ] 8.2 Owner runs `npx supabase login` and `npx supabase link --project-ref <ref>` (password typed by the owner, never pasted into chat or a file); verify `npx supabase migration list` shows the local migrations and none remote
-- [ ] 8.3 Owner runs `npx supabase db push`; verify `npx supabase migration list` shows every migration on both sides, the dashboard shows the four tables with RLS on, the bucket `audio` as private, and the `vector` extension enabled
-- [ ] 8.4 Run the anonymous checks against the cloud project with the publishable key from the dashboard (table read returns no rows or an error, `ping` returns `ok`); verify both outputs
+- [x] 8.2 Owner runs `npx supabase login` and `npx supabase link --project-ref <ref>` (password typed by the owner, never pasted into chat or a file); verify `npx supabase migration list --remote` shows the local migrations and none remote
+- [x] 8.3 Owner runs `npx supabase db push --remote` (in CLI v3 `db` commands target the local stack unless `--remote` is given); verify `npx supabase migration list --remote` shows every migration on both sides, the dashboard shows the four tables with RLS on, the bucket `audio` as private, and the `vector` extension enabled
+- [x] 8.4 Run the anonymous checks against the cloud project with the publishable key from the dashboard (table read returns no rows or an error, `ping` returns `ok`); verify both outputs
 - [ ] 8.5 Owner adds the repository variables `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (Settings, Secrets and variables, Actions, Variables tab) and starts the keep-alive workflow by hand from the Actions tab once it is on `main`; verify the run is green (after merge, see Workflow follow-up)
 
 ## 9. Documentation, ROADMAP, and final checks
 
 - [x] 9.1 Update STRUCTURE.md: the `supabase/` layout (config, tests, generated types), the folder table, Config and secrets (new variables, publishable key, no secret in the app), Data and backend (bucket, grants and RLS rules, tests, types workflow, the one-command scripts), Testing (database tests, API checks, the two workflows), the CI paragraph (second workflow, path filter), and a Keep-alive section (daily ping, variables, 60-day rule, how to re-enable); verify each npm script and file name named there exists (`grep` each)
 - [x] 9.2 Update `openspec/config.yaml` `context` (Stack line: publishable key, generated types location, local stack for development); verify `openspec validate --specs` still passes and the file still parses
-- [ ] 9.3 Run `npm run typecheck`, `npm run lint`, `npm test -- --ci`, `npm run db:reset`, `npm run db:test`, `npm run db:smoke`, and `npm run db:types:check`; verify all exit 0
-- [ ] 9.4 Fresh-clone check: clone the branch into a temporary folder with no `.env`, run `npm ci`, typecheck, lint, test, `db:start`, `db:test`, `db:smoke`; verify all pass and that `git grep -nE "sb_secret_|eyJ|password"` finds no real secret in the repository
-- [ ] 9.5 Tick Applied for entry 3 in ROADMAP.md, make Conventional Commits (no AI attribution, only the configured author), and push the branch; verify `git log --oneline main..HEAD` and that the remote branch matches
+- [x] 9.3 Run `npm run typecheck`, `npm run lint`, `npm test -- --ci`, `npm run db:reset`, `npm run db:test`, `npm run db:smoke`, and `npm run db:types:check`; verify all exit 0
+- [x] 9.4 Fresh-clone check: clone the branch into a temporary folder with no `.env`, run `npm ci`, typecheck, lint, test, `db:start`, `db:test`, `db:smoke`; verify all pass and that `git grep -nE "sb_secret_|eyJ|password"` finds no real secret in the repository
+- [x] 9.5 Tick Applied for entry 3 in ROADMAP.md, make Conventional Commits (no AI attribution, only the configured author), and push the branch; verify `git log --oneline main..HEAD` and that the remote branch matches
 - [ ] 9.6 Give the owner the pull request title and a ready-to-paste description (English); owner opens the pull request, waits for both workflows (`ci.yml` and `database.yml`) to be green, and merges; verify via the public GitHub API that the checks passed
 
 ## Workflow follow-up
