@@ -75,23 +75,23 @@ Do this group before ticking anything in `ROADMAP.md`.
   - Add `jest.config.js` with preset `jest-expo` and a `moduleNameMapper` for `@/`, and the script `"test": "jest"`.
   - Verify: `npx expo-doctor` and `npm ls @testing-library/react-native` report no peer dependency errors.
 - [x] 7.2 Write `__tests__/app/index.test.tsx`. It renders the placeholder route and finds its text with RNTL. Verify: `npm test` passes. A deliberately wrong expected text makes it fail; undo that afterwards.
-- [ ] 7.3 Commit `test: set up Jest with React Native Testing Library`. Verify: `git status --short` is clean.
+- [x] 7.3 Commit `test: set up Jest with React Native Testing Library`. Verify: `git status --short` is clean.
 
 ## 8. Public env config
 
-- [ ] 8.1 Install `zod` with `npm i zod`. Write `src/lib/env.test.ts` for the `app-env-config` scenarios:
+- [x] 8.1 Install `zod` with `npm i zod`. Write `src/lib/env.test.ts` for the `app-env-config` scenarios:
   - `staging` throws an error that names `EXPO_PUBLIC_APP_ENV` and lists `development` and `production`
   - a missing value and an empty string both give `development`
   - `production` is returned as `production`
   - extra keys such as `SECRET_KEY` are not in the result
 
   Verify: the tests fail before the module exists.
-- [ ] 8.2 Implement `src/lib/env.ts` (design D9). `parseEnv(raw)` is pure and Zod-validated. `env` is built from an explicit object that reads `process.env.EXPO_PUBLIC_APP_ENV` by static member access. Verify: `npm test`, `npm run typecheck`, and `npm run lint` all pass, and the result is typed as `'development' | 'production'`.
+- [x] 8.2 Implement `src/lib/env.ts` (design D9). `parseEnv(raw)` is pure and Zod-validated. `env` is built from an explicit object that reads `process.env.EXPO_PUBLIC_APP_ENV` by static member access. Verify: `npm test`, `npm run typecheck`, and `npm run lint` all pass, and the result is typed as `'development' | 'production'`.
 - [ ] 8.3 Show the environment on the placeholder screen (for example "Environment: development"), and extend `__tests__/app/index.test.tsx` to assert it. Verify:
   - `npm test` passes.
   - With `EXPO_PUBLIC_APP_ENV=production` in `.env`, the development build shows "production" after Metro restarts.
   - Remove `.env` afterwards.
-- [ ] 8.4 Add `.env.example` with `EXPO_PUBLIC_APP_ENV=development`, a comment on the allowed values and the default, and a note that `EXPO_PUBLIC_*` values are public and never secrets. Verify: after `touch .env .env.local`, `git status --short` lists neither file. Delete both afterwards.
+- [x] 8.4 Add `.env.example` with `EXPO_PUBLIC_APP_ENV=development`, a comment on the allowed values and the default, and a note that `EXPO_PUBLIC_*` values are public and never secrets. Verify: after `touch .env .env.local`, `git status --short` lists neither file. Delete both afterwards.
 - [ ] 8.5 Commit `feat: add typed public env config`. Verify: `git status --short` is clean.
 
 ## 9. CI workflow
