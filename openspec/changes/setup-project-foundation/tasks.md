@@ -22,21 +22,21 @@ Do this group before ticking anything in `ROADMAP.md`.
 
 - [x] 3.1 Explain what a branch is and why each change gets its own. Run `git switch -c feat/setup-project-foundation`. Verify: `git branch --show-current` prints `feat/setup-project-foundation`.
 - [x] 3.2 In `ROADMAP.md`, tick Proposed and Reviewed for entry 1. The owner's apply request is the review approval; if that is unclear, ask first. Verify: `git diff ROADMAP.md` shows only those two ticks.
-- [ ] 3.3 Explain Conventional Commits and the types used in this PR (`docs`, `chore`, `test`, `feat`, `ci`). Commit `openspec/changes/setup-project-foundation/` and `ROADMAP.md` as `docs(openspec): propose setup-project-foundation`. Verify: `git show --stat HEAD` lists only those paths.
+- [x] 3.3 Explain Conventional Commits and the types used in this PR (`docs`, `chore`, `test`, `feat`, `ci`). Commit `openspec/changes/setup-project-foundation/` and `ROADMAP.md` as `docs(openspec): propose setup-project-foundation`. Verify: `git show --stat HEAD` lists only those paths.
 
 ## 4. Expo app with TypeScript and Expo Router
 
-- [ ] 4.1 Find the latest stable SDK with `npm view expo dist-tags --json` (58 today). Scaffold the `blank-typescript` template for that SDK in a temporary directory outside the repository (design D2), then move its files in.
+- [x] 4.1 Find the latest stable SDK with `npm view expo dist-tags --json` (58 today). Scaffold the `blank-typescript` template for that SDK in a temporary directory outside the repository (design D2), then move its files in.
   - Merge the template's `.gitignore` into the existing one. Keep the agent lines, and make sure `/android`, `/ios`, `.env`, `.env*.local`, and `coverage/` are listed.
   - Verify: `npm install` succeeds, and `package.json` pins the chosen `expo` version.
-- [ ] 4.2 Set the identity in `app.json` (design D3): name `Dayspoken`, slug and scheme `dayspoken`, `com.hafidfirmanfebrian.dayspoken` for both `ios.bundleIdentifier` and `android.package`, and portrait orientation. Verify: `npx expo config --type public` shows these values.
-- [ ] 4.3 Add Expo Router (design D2):
+- [x] 4.2 Set the identity in `app.json` (design D3): name `Dayspoken`, slug and scheme `dayspoken`, `com.hafidfirmanfebrian.dayspoken` for both `ios.bundleIdentifier` and `android.package`, and portrait orientation. Verify: `npx expo config --type public` shows these values.
+- [x] 4.3 Add Expo Router (design D2):
   - Run `npx expo install expo-router react-native-safe-area-context react-native-screens expo-linking expo-constants expo-status-bar`.
   - Set `"main": "expo-router/entry"` and add the `expo-router` plugin.
   - Delete `App.tsx` and `index.ts`.
   - Create `app/_layout.tsx` (a root `Stack`) and `app/index.tsx` (a placeholder with the app name and one line of text, no colors).
   - Verify: `npx expo export --platform android --output-dir <tmp-dir>` finishes without errors. Delete the output afterwards.
-- [ ] 4.4 Configure TypeScript (design D6):
+- [x] 4.4 Configure TypeScript (design D6):
   - `tsconfig.json` extends `expo/tsconfig.base`, with `"strict": true` and `paths` `"@/*": ["src/*"]`.
   - Add the script `"typecheck": "tsc --noEmit"`, and add `.nvmrc` containing `22`.
   - Verify: `npm run typecheck` exits 0.
