@@ -180,7 +180,7 @@ All components live in `src/ui/<Name>.tsx`, with a test next to each and a barre
 | Toast | `ToastProvider` + `useToast()` | Queue of one visible toast, top-aligned below the safe area. 4s, or 6s with an action. Reanimated `FadeIn`/`FadeOut` (reduce-motion aware). `AccessibilityInfo.announceForAccessibility` |
 | EmptyState, ErrorState | Icon + Text + Button | ErrorState defaults: "Something went wrong" and "Try again". `retrying` puts the button into loading. Live region `polite` |
 | Banner | `View` | Tones neutral (surface, border, muted icon) and accent (accent icon and outline). Optional action (ghost Button, sm) and dismiss (IconButton "Dismiss"). Live region `polite` |
-| Skeleton | Reanimated `View` | `bg-border`, shapes `text` (12 high, radius 6), `card` (radius 22), `pill`. Opacity pulse 1 → 0.5 over 1s, static when `useReducedMotion()` is true. Hidden from accessibility |
+| Skeleton | Reanimated `View` | `bg-foreground/15` (`bg-border` was about 1.15:1 on the light background and almost invisible; checked side by side on a device, 2026-11-17), shapes `text` (12 high, radius 6), `card` (radius 22), `pill`. Opacity pulse 1 → 0.5 over 1s, static when `useReducedMotion()` is true. Hidden from accessibility |
 | SectionHeader | `View` + Text + optional ghost Button | `bg-background` (opaque, for sticky headers). Sizes `md` (heading) and `sm` (caption, muted) |
 
 - **No danger color:** errors use `accent` with an icon and text. Destructive confirmations use the primary Button with a clear label. This keeps the UI neutral (proposal, "Details filled in").
@@ -295,6 +295,7 @@ Conventional Commits on `feat/setup-design-system`, one per task group. Each gro
 9. `feat(ui): add dev-only component gallery`
 10. `chore: declare css modules for typecheck on a fresh clone` (found by the fresh-clone check in group 10)
 11. `docs: tick Applied for setup-design-system`
+12. `fix(ui): make skeleton visible in light mode` (after the device review, before the pull request)
 
 ## Risks / Trade-offs
 

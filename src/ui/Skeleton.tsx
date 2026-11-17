@@ -55,7 +55,8 @@ export function Skeleton({ shape = 'text', width = '100%', height, testID }: Ske
       aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      className={`bg-border ${SHAPE_CLASS[shape]}`}
+      // 15% of the foreground token: visible in both modes (bg-border was about 1.15:1 in light).
+      className={`bg-foreground/15 ${SHAPE_CLASS[shape]}`}
       style={[{ width, height: height ?? DEFAULT_HEIGHT[shape] }, pulse]}
     />
   );

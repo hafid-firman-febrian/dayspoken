@@ -38,7 +38,7 @@ describe('Skeleton shapes', () => {
     await renderWithProviders(<Skeleton shape={shape} testID="skeleton" />);
     const element = shown('skeleton');
     expect(element.props.className.split(' ')).toEqual(
-      expect.arrayContaining(['bg-border', radius]),
+      expect.arrayContaining(['bg-foreground/15', radius]),
     );
     expect(element).toHaveStyle({ height });
   });
