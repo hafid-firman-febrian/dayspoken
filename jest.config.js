@@ -3,7 +3,13 @@ module.exports = {
   preset: 'jest-expo',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    // jest-expo resolves the "react-native" export condition, which is an ES module build
+    // that Jest does not transform. Use the CommonJS build instead.
+    '^lucide-react-native$':
+      '<rootDir>/node_modules/lucide-react-native/dist/cjs/lucide-react-native.js',
   },
+  // Reanimated 4 and Worklets pick their JavaScript implementations (not the native ones) under Jest.
+  resolver: 'react-native-reanimated/jest/resolver',
   setupFiles: ['<rootDir>/jest.setup.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/android/', '/ios/'],
   transformIgnorePatterns: [

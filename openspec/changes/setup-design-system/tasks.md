@@ -112,31 +112,31 @@
 
 ## 6. Layout, text, and action components
 
-- [ ] 6.1 Run `npx expo install react-native-svg` and `npm i lucide-react-native`. Complete `jest.setup.ts` (design D14: Reanimated, Gesture Handler, SVG if needed). Add `src/ui/test-utils.tsx` with `renderWithProviders(ui, { scheme })` (design D8). Verify: a throwaway test that renders a Lucide icon through the helper passes in both schemes; delete it afterwards.
-- [ ] 6.2 Build **Icon** and **Text** with tests (design D8; spec `base-ui-components`):
+- [x] 6.1 Run `npx expo install react-native-svg` and `npm i lucide-react-native`. Complete `jest.setup.ts` (design D14: Reanimated, Gesture Handler, SVG if needed). Add `src/ui/test-utils.tsx` with `renderWithProviders(ui, { scheme })` (design D8). Verify: a throwaway test that renders a Lucide icon through the helper passes in both schemes; delete it afterwards.
+- [x] 6.2 Build **Icon** and **Text** with tests (design D8; spec `base-ui-components`):
   - Icon: the tone color comes from the scheme's tokens (light `muted` in light, dark `muted` in dark), it is hidden from accessibility without a label, and it is announced as an image with a label.
   - Text: display, title, and heading have the header role; each style uses its family; the tone defaults to `on-primary` inside a hero tone context; display and title have `maxFontSizeMultiplier` 1.4.
 
   Verify: `npm test` passes.
-- [ ] 6.3 Build **Screen** and **Card** with tests:
+- [x] 6.3 Build **Screen** and **Card** with tests:
   - Screen: renders children inside safe areas, the scroll variant scrolls and keeps taps while the keyboard is open (`keyboardShouldPersistTaps`), and the unpadded variant.
   - Card: a pressable Card calls `onPress` and has the button role; a hero Card makes its Text `on-primary`.
 
   Verify: `npm test` passes.
-- [ ] 6.4 Build **Button** and **IconButton** with tests:
+- [x] 6.4 Build **Button** and **IconButton** with tests:
   - Button: press, disabled (no call, disabled state), loading (no call, busy state, indicator shown), each variant, the small size with a hit area of at least 44.
   - IconButton: the label is required (a `// @ts-expect-error` line in the test proves typecheck rejects it); announced as "Record, button"; the fab variant uses `fab` and `on-fab` in both modes.
 
   Verify: `npm test` and `npm run typecheck` pass.
-- [ ] 6.5 Build **Chip**, **SectionHeader**, and **Skeleton** with tests:
+- [x] 6.5 Build **Chip**, **SectionHeader**, and **Skeleton** with tests:
   - Chip: the dot plus the label read as the label; a selectable chip reports `true` and announces selected.
   - SectionHeader: the header role, and its action calls back.
   - Skeleton: hidden from accessibility, and static (no animation started) when reduced motion is mocked on.
 
   Verify: `npm test` passes.
-- [ ] 6.6 Add `src/ui/index.ts` exporting the components so far. Add the lint rule that `src/ui/**` may not import `@/features` (design D11.3). Verify: a temporary `@/features/demo` import in `src/ui/` fails lint; delete it, and then `npm run lint` and `npm run typecheck` pass.
-- [ ] 6.7 Update `STRUCTURE.md` Testing and Styling: the `renderWithProviders` helper, component tests run in both modes, the `src/ui` import rule, and the screen-state mapping (design D9). Verify: `git diff STRUCTURE.md` shows only these points.
-- [ ] 6.8 Commit `feat(ui): add layout, text, and action components`. Verify: `git status --short` is clean.
+- [x] 6.6 Add `src/ui/index.ts` exporting the components so far. Add the lint rule that `src/ui/**` may not import `@/features` (design D11.3). Verify: a temporary `@/features/demo` import in `src/ui/` fails lint; delete it, and then `npm run lint` and `npm run typecheck` pass.
+- [x] 6.7 Update `STRUCTURE.md` Testing and Styling: the `renderWithProviders` helper, component tests run in both modes, the `src/ui` import rule, and the screen-state mapping (design D9). Verify: `git diff STRUCTURE.md` shows only these points.
+- [x] 6.8 Commit `feat(ui): add layout, text, and action components`. Verify: `git status --short` is clean.
 
 ## 7. Text field and code input
 

@@ -174,8 +174,18 @@ The app shows the answer with source cards that open the cited entries.
 - **Contrast.** Text contrast must be at least 4.5:1.
 - **Font and icons.** Geist for all text, Lucide for icons.
 - **Base UI (`src/ui`):** Screen, Text (Geist variants), Button, IconButton, TextField, CodeInput, Card, Chip, BottomSheet, Dialog, Toast, EmptyState, ErrorState, Banner, Skeleton, SectionHeader, Icon.
+  - Import them from `@/ui`. `src/ui` is pure UI: ESLint rejects any import of feature code from it.
+  - Write class names out in full (`'bg-surface rounded-card'`, or a map of full names). Tailwind only generates classes it can read in the source, so a name built from a variable is silently missing.
 - **Feature UI** lives in its feature's `components/` folder and is built from base UI: FloatingTabBar, TodayCard, WeekMoodStrip, MoodChip, MoodPicker, StreakBadge, VoiceOrb, RecordControls, ProgressBar, EntryCard, CitationCard, AudioPlayer, ProcessingStepper.
-- **Screen states.** Empty, loading, error, offline, and quota-reached (per user or global) are states of each screen, not separate screens.
+- **Screen states.** Empty, loading, error, offline, and quota-reached (per user or global) are states of each screen, not separate screens. Each state has one base component, so no feature invents its own:
+
+  | State | Component |
+  |---|---|
+  | Empty | `EmptyState` |
+  | Loading | `Skeleton` shaped like the content, or `loading` on a `Button` or `ErrorState` for actions |
+  | Error | `ErrorState` (a screen or section), the error state of `TextField` and `CodeInput` (fields), `Toast` (transient) |
+  | Offline | `Banner` (neutral, "You're offline") |
+  | Quota reached | `Banner` (accent), or `EmptyState` when the whole screen is blocked |
 
 ### State
 
@@ -215,6 +225,8 @@ The app shows the answer with source cards that open the cited entries.
 ### Testing
 
 - **Unit and component tests:** Jest and React Native Testing Library. Each test sits next to the file it tests.
+- **Base UI tests.** Each component in `src/ui` has a test that checks behavior and accessibility (role, label, state), run in light and dark mode with `describe.each(SCHEMES)`. Render with `renderWithProviders(ui, { scheme })` from `src/ui/test-utils.tsx`: it adds the safe area and a theme with the scheme forced. Class names are not compiled to styles under Jest, so tests read `className` and, for colors read in code, the values the component passes on.
+- **Native libraries in Jest** are mocked in `jest.setup.ts` (gesture handler, Reanimated, fonts, splash screen, Nitro). MMKV has its own in-memory mock.
 - **Route tests are the exception.** Expo Router treats every file in `app/` as a route, so route tests live in `__tests__/app/` and mirror the route path (`__tests__/app/index.test.tsx`).
 - **Edge Functions:** Deno tests.
 - **End-to-end:** Maestro flows live in `e2e/`.

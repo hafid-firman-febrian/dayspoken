@@ -10,6 +10,11 @@ const featureImportPattern = {
   message: 'Import a feature only through its index.ts (for example @/features/auth).',
 };
 
+const mmkvPath = {
+  name: 'react-native-mmkv',
+  message: 'Import MMKV only inside src/lib/mmkv.ts; use its kvStorage adapter.',
+};
+
 module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
@@ -63,13 +68,27 @@ module.exports = defineConfig([
       'no-restricted-imports': [
         'error',
         {
-          paths: [
+          paths: [mmkvPath],
+          patterns: [featureImportPattern],
+        },
+      ],
+    },
+  },
+  {
+    // STRUCTURE.md: src/ui is pure UI. It holds no business logic, so it never imports feature code.
+    files: ['src/ui/**/*.{js,jsx,ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [mmkvPath],
+          patterns: [
+            featureImportPattern,
             {
-              name: 'react-native-mmkv',
-              message: 'Import MMKV only inside src/lib/mmkv.ts; use its kvStorage adapter.',
+              group: ['@/features', '@/features/*'],
+              message: 'src/ui holds base components only: it must not import feature code.',
             },
           ],
-          patterns: [featureImportPattern],
         },
       ],
     },
