@@ -50,8 +50,8 @@ Out of scope: any app code, dependencies, Expo or Supabase setup (setup-project-
 
 ### 1. setup-project-foundation
 
-- [ ] Proposed
-- [ ] Reviewed
+- [x] Proposed
+- [x] Reviewed
 - [ ] Applied
 - [ ] Archived
 
