@@ -40,11 +40,11 @@ Do this group before ticking anything in `ROADMAP.md`.
   - `tsconfig.json` extends `expo/tsconfig.base`, with `"strict": true` and `paths` `"@/*": ["src/*"]`.
   - Add the script `"typecheck": "tsc --noEmit"`, and add `.nvmrc` containing `22`.
   - Verify: `npm run typecheck` exits 0.
-- [ ] 4.5 Commit `chore: scaffold Expo app with TypeScript and Expo Router`. Verify: `git status --short` is clean, and no `node_modules/`, `.expo/`, `android/`, or `ios/` paths were committed.
+- [x] 4.5 Commit `chore: scaffold Expo app with TypeScript and Expo Router`. Verify: `git status --short` is clean, and no `node_modules/`, `.expo/`, `android/`, or `ios/` paths were committed.
 
 ## 5. Development build
 
-- [ ] 5.1 Run `npx expo install expo-dev-client`. Verify: `npx expo-doctor` reports no failed checks.
+- [x] 5.1 Run `npx expo install expo-dev-client`. Verify: `npx expo-doctor` reports no failed checks.
 - [ ] 5.2 Build and run the development build on Android (design D4):
   - Export `ANDROID_HOME=$HOME/Library/Android/sdk` for the session. Edit `~/.zshrc` only if the owner agrees.
   - Start an emulator, or connect a USB device.

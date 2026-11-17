@@ -42,7 +42,10 @@ See `proposal.md` for the motivation. Requirements are in `specs/app-env-config/
 
 **Non-Goals:**
 - No providers in the root layout (TanStack Query, theme, fonts). They arrive with the changes that need them.
-- No web target. `react-native-web` and `react-dom` are not installed.
+- No web target. `react-native-web` is not installed.
+  - `react-dom` is installed anyway, because Expo Router's dependencies (Radix tabs, `@expo/metro-runtime`) require it as a peer.
+  - It is pinned with `npx expo install react-dom` to the same version as `react` (19.3.0), as Expo's default template does.
+  - Without the pin, npm picks the newest `react-dom`, which needs a newer `react`, and later installs fail with ERESOLVE.
 - No `eas.json`, no Expo account, and no APK.
 - No branch protection on `main`.
 
