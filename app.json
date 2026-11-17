@@ -21,10 +21,7 @@
       },
       "predictiveBackGestureEnabled": false
     },
-    "plugins": [
-      "expo-router",
-      "expo-status-bar"
-    ],
+    "plugins": ["expo-router", "expo-status-bar"],
     "experiments": {
       "typedRoutes": true
     }

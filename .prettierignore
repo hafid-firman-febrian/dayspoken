@@ -1,0 +1,11 @@
+# Hand-written docs and planning artifacts keep their own formatting
+openspec/
+*.md
+
+# Generated
+android/
+ios/
+.expo/
+dist/
+coverage/
+package-lock.json

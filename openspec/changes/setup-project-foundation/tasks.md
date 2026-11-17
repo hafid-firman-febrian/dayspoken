@@ -51,17 +51,17 @@ Do this group before ticking anything in `ROADMAP.md`.
   - Run `npx expo run:android`.
   - Verify: the app opens through the dev client and shows the placeholder screen, and `git status --short` does not list `android/`.
   - Optional, not tracked: `npx expo run:ios`.
-- [ ] 5.3 Commit `chore: add expo-dev-client for development builds`. Verify: `git show --stat HEAD` lists only `package.json`, `package-lock.json`, `app.json` (if the plugin was added), and `tasks.md`.
+- [x] 5.3 Commit `chore: add expo-dev-client for development builds`. Verify: `git show --stat HEAD` lists only `package.json`, `package-lock.json`, `app.json` (if the plugin was added), and `tasks.md`.
 
 ## 6. ESLint and Prettier
 
-- [ ] 6.1 Set up ESLint and Prettier (design D7):
+- [x] 6.1 Set up ESLint and Prettier (design D7):
   - Run `npx expo lint` to create `eslint.config.js`.
   - Install `prettier`, `eslint-config-prettier`, and `eslint-plugin-prettier`, and add the plugin's recommended config.
   - Add `.prettierrc` (`singleQuote: true`, `printWidth: 100`) and `.prettierignore` (`openspec/`, `*.md`, `android/`, `ios/`, `.expo/`, `coverage/`, `package-lock.json`).
   - Add the scripts `"lint": "expo lint"` and `"format": "prettier --write ."`, then run `npm run format` once.
   - Verify: `npm run lint` exits 0, and `git diff --stat -- '*.md' openspec/` is empty.
-- [ ] 6.2 Make ESLint resolve the `@/` alias, and add the two structure rules (design D7):
+- [x] 6.2 Make ESLint resolve the `@/` alias, and add the two structure rules (design D7):
   - `no-restricted-properties` on `process.env` for `app/**` and `src/**`, except `src/lib/env.ts`.
   - `no-restricted-imports` with the pattern `@/features/*/*`.
   - Verify with temporary probe files: a `process.env.FOO` read in `app/` and an import of `@/features/demo/components/X` each make `npm run lint` fail with the rule's message. A badly formatted line also makes it fail. Delete the probes, then `npm run lint` exits 0.
