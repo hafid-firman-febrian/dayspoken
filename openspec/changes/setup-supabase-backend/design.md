@@ -166,7 +166,7 @@ RLS decides which rows. Column grants decide which columns. Both are needed, bec
 3. Owner steps (browser and terminal), each explained in plain Indonesian by the agent:
    1. Create the Free project in the Supabase dashboard (suggested region: Southeast Asia (Singapore), the closest to Indonesia) and note the database password in a password manager.
    2. `supabase login` and `supabase link --project-ref <ref>` (typed with `! ` in the session so the owner enters the password).
-   3. `supabase db push`, then confirm the migration list matches.
+   3. `supabase db push --remote`, then `supabase migration list --remote` to confirm the lists match (v3 targets the local stack unless `--remote` is given).
    4. Run the two anonymous checks against the cloud project (table refused, `ping` returns `ok`).
    5. Add the repository variables `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`, then start the keep-alive workflow once by hand.
 4. Commit in small Conventional Commits, push, and the owner opens the pull request. The path-filtered database workflow and `ci.yml` must be green before the owner merges.

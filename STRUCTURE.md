@@ -240,7 +240,7 @@ The app shows the answer with source cards that open the cited entries.
 
 **The cloud project (production)**
 
-- One Free-plan project. The owner links it with `npx supabase link --project-ref <ref>` and deploys with `npx supabase db push`. The database password is typed by the owner and is never stored in a file, a workflow, or a chat.
+- One Free-plan project. The owner links it with `npx supabase link --project-ref <ref>` and deploys with `npx supabase db push --remote` (CLI v3 targets the local stack by default, so `--remote` is required). The database password is typed by the owner and is never stored in a file, a workflow, or a chat.
 - Free-plan limits to keep in mind: 500 MB database, 1 GB file storage (about 1,400 three-minute recordings for the whole app), 50 MB per upload, 5 GB egress, and a pause after 7 days of low activity.
 
 ### Keep-alive
