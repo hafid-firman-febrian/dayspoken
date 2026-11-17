@@ -167,7 +167,9 @@ The app shows the answer with source cards that open the cited entries.
   - The preference is a Zustand store in `src/theme/theme-mode-store.ts` (`useThemeMode()`), saved in MMKV under `preferences.theme`. MMKV is synchronous, so the saved mode is known before the first render. An unknown stored value becomes `system`.
   - `ThemeProvider` resolves the scheme and applies it everywhere: the CSS variables behind the color classes, `useTheme()` for values read in code, the status bar, the native root background, the navigation theme, and the native appearance.
   - `ThemeScope scheme="dark"` renders a subtree in one scheme whatever the mode is. Always-dark screens (Record) use it.
-- **Root providers** (`app/_layout.tsx`), outermost first: `GestureHandlerRootView`, `ThemeProvider`, the navigator. Each later step that needs a provider adds it here and updates this line.
+- **Root providers** (`app/_layout.tsx`), outermost first: the font gate (`useAppFonts()` renders nothing and keeps the splash screen until Geist is loaded, or has failed), `GestureHandlerRootView`, `ThemeProvider`, the navigator. Each later step that needs a provider adds it here and updates this line.
+- **Fonts.** Geist ships inside the app (`src/theme/fonts.ts`, one import per weight, so only four files are bundled) and loads offline. Text sets only `fontFamily`, never `fontWeight`: React Native needs one family per weight.
+- **Splash colors** live in `app.json` as copies of the `background` tokens, and a test keeps them in step. `expo run:android` does not regenerate an existing `android/` folder, so after changing `app.json` plugins or splash colors, run `npx expo prebuild --platform android` and rebuild.
 - **Mood colors carry meaning.** Mood is a 1–5 scale (Rough, Low, Okay, Good, Great), defined in `src/theme/mood.ts`. A mood is never shown by color alone; it always has its label. Mood colors are indicators only (dots, rings, fills): none of them reaches 4.5:1 as text, so the label uses `foreground` or `muted`, never a mood color.
 - **Contrast.** Text contrast must be at least 4.5:1.
 - **Font and icons.** Geist for all text, Lucide for icons.

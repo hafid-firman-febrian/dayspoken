@@ -102,13 +102,13 @@
 
 ## 5. Geist fonts
 
-- [ ] 5.1 Run `npx expo install @expo-google-fonts/geist expo-font expo-splash-screen`. Add `src/theme/fonts.ts` exporting `GEIST_FONTS` (the four weights in design D5). In `app/_layout.tsx`, hold the splash screen with `preventAutoHideAsync()`, render `null` until `useFonts` has finished or failed, then hide it. Verify: `npx expo-doctor` and `npm run typecheck` pass.
-- [ ] 5.2 Configure the `expo-splash-screen` plugin in `app.json` with `backgroundColor` `#F8F6F5` and `dark.backgroundColor` `#100A09`. Extend `src/theme/tokens.test.ts` to assert that those values equal `colors.light.background` and `colors.dark.background` (design D10). Verify: `npm test` passes, and changing one of the two values in `app.json` makes it fail; undo that afterwards.
-- [ ] 5.3 Rebuild, then verify on the device:
+- [x] 5.1 Run `npx expo install @expo-google-fonts/geist expo-font expo-splash-screen`. Add `src/theme/fonts.ts` exporting `GEIST_FONTS` (the four weights in design D5). In `app/_layout.tsx`, hold the splash screen with `preventAutoHideAsync()`, render `null` until `useFonts` has finished or failed, then hide it. Verify: `npx expo-doctor` and `npm run typecheck` pass.
+- [x] 5.2 Configure the `expo-splash-screen` plugin in `app.json` with `backgroundColor` `#F8F6F5` and `dark.backgroundColor` `#100A09`. Extend `src/theme/tokens.test.ts` to assert that those values equal `colors.light.background` and `colors.dark.background` (design D10). Verify: `npm test` passes, and changing one of the two values in `app.json` makes it fail; undo that afterwards.
+- [x] 5.3 Rebuild, then verify on the device:
   - a cold start shows the splash screen, then the placeholder screen in Geist, with no system-font frame
   - the same happens with airplane mode on
   - in dark appearance the splash background is dark
-- [ ] 5.4 Commit `feat(theme): load Geist fonts`. Verify: `git status --short` is clean.
+- [x] 5.4 Commit `feat(theme): load Geist fonts`. Verify: `git status --short` is clean.
 
 ## 6. Layout, text, and action components
 

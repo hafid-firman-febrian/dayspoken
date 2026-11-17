@@ -21,7 +21,19 @@
       },
       "predictiveBackGestureEnabled": false
     },
-    "plugins": ["expo-router", "expo-status-bar"],
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F8F6F5",
+          "dark": {
+            "backgroundColor": "#100A09"
+          }
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     }

@@ -3,6 +3,7 @@ export { ThemeProvider } from './ThemeProvider';
 export { ThemeScope } from './ThemeScope';
 export { useTheme, type ThemeValue } from './theme-context';
 export { useThemeMode } from './theme-mode-store';
+export { useAppFonts } from './use-app-fonts';
 export type { ThemeMode } from './resolve-scheme';
 export { MOOD_LEVELS, MOOD_SCALE, type MoodInfo, type MoodLevel } from './mood';
 export {

@@ -1,3 +1,5 @@
+import appConfig from '../../app.json';
+
 import { contrastRatio } from './contrast';
 import { MOOD_LEVELS, MOOD_SCALE } from './mood';
 import {
@@ -187,5 +189,30 @@ describe('contrast', () => {
     expect(failures([broken])).toEqual([
       expect.stringMatching(/^light: text muted on background is \d\.\d\d:1, needs 4\.5:1$/),
     ]);
+  });
+});
+
+describe('splash screen colors', () => {
+  // app.json cannot import TypeScript, so its splash colors are copies of the tokens.
+  // This test keeps them in step (otherwise the splash screen flashes the wrong color).
+  const splash = appConfig.expo.plugins.find(
+    (plugin): plugin is [string, { backgroundColor: string; dark: { backgroundColor: string } }] =>
+      Array.isArray(plugin) && plugin[0] === 'expo-splash-screen',
+  );
+
+  it('is configured in app.json', () => {
+    expect(splash).toBeDefined();
+  });
+
+  it('uses the light background token', () => {
+    expect(splash?.[1].backgroundColor).toBe(colors.light.background);
+  });
+
+  it('uses the dark background token in dark mode', () => {
+    expect(splash?.[1].dark.backgroundColor).toBe(colors.dark.background);
+  });
+
+  it('lets the app follow the device appearance', () => {
+    expect(appConfig.expo.userInterfaceStyle).toBe('automatic');
   });
 });
