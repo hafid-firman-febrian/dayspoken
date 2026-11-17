@@ -73,8 +73,8 @@ Out of scope: NativeWind, theme and UI components (setup-design-system); Supabas
 
 ### 2. setup-design-system
 
-- [ ] Proposed
-- [ ] Reviewed
+- [x] Proposed
+- [x] Reviewed
 - [ ] Applied
 - [ ] Archived
 
