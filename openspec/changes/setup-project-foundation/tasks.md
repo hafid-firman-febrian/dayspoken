@@ -110,11 +110,11 @@ Do this group before ticking anything in `ROADMAP.md`.
   2. Run `npm ci`, `npm run typecheck`, `npm run lint`, and `npm test` there, with no `.env` and no dev server.
 
   Verify: all four exit 0. If typecheck fails because generated Expo types are missing, apply the mitigation in design (Risks), then repeat. Delete the temporary clone afterwards.
-- [ ] 9.3 Commit `ci: add typecheck, lint, and test workflow`. Verify: `git status --short` is clean.
+- [x] 9.3 Commit `ci: add typecheck, lint, and test workflow`. Verify: `git status --short` is clean.
 
 ## 10. Documentation
 
-- [ ] 10.1 Update `STRUCTURE.md` (design D14):
+- [x] 10.1 Update `STRUCTURE.md` (design D14):
   - the `@/` import alias
   - the check scripts and `.nvmrc`
   - route tests in `__tests__/app/`
@@ -124,7 +124,7 @@ Do this group before ticking anything in `ROADMAP.md`.
   - the Git workflow split: the agent runs local `git`, and the owner opens the PR, watches CI, and merges in the browser. This replaces the lines about `gh` and `gh auth login`.
 
   Verify: `git diff STRUCTURE.md` shows these points and changes no other section.
-- [ ] 10.2 Update the two `operations.apply.guidance` entries in `openspec/config.yaml` that mention `gh` (design D14). Verify:
+- [x] 10.2 Update the two `operations.apply.guidance` entries in `openspec/config.yaml` that mention `gh` (design D14). Verify:
   - `grep -n -w gh openspec/config.yaml` finds nothing.
   - `openspec instructions apply --change setup-project-foundation --json` shows the new guidance.
   - `git diff openspec/config.yaml` touches only those two entries.
