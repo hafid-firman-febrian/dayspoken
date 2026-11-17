@@ -57,7 +57,7 @@ context: |
   primary, on-primary, accent, mood 1-5), defined once per mode. Light/dark follows
   the system, with a manual override. A mood is never shown by color alone.
   Text contrast is at least 4.5:1. The Record screen has an animated VoiceOrb.
-  The token values are in ROADMAP.md (setup-design-system).
+  The token values are in src/theme/tokens.ts.
   The rejected "Warm Journal" look (cream, serif, terracotta) must not come back.
 
   Stack:

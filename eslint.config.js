@@ -25,6 +25,22 @@ module.exports = defineConfig([
     },
   },
   {
+    // STRUCTURE.md: components use semantic tokens, never hex colors. Hex values live in
+    // src/theme only (the token source).
+    files: ['app/**/*.{js,jsx,ts,tsx}', 'src/**/*.{js,jsx,ts,tsx}'],
+    ignores: ['src/theme/**'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
+          message:
+            'Use a semantic token (bg-surface, text-muted, ...) instead of a hex color. Hex values live in src/theme/tokens.ts.',
+        },
+      ],
+    },
+  },
+  {
     // STRUCTURE.md: features import each other only through their index.ts.
     files: ['**/*.{js,jsx,ts,tsx}'],
     rules: {

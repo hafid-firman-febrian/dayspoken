@@ -92,7 +92,7 @@ dayspoken/
 - **State has two homes:** server data lives only in TanStack Query. Zustand holds UI state only (the recording flow, preferences).
 - **`src/ui` is pure UI:** it never fetches data and holds no business logic.
 - **Features stay isolated:** a feature imports another only through that feature's `index.ts`. ESLint rejects deep imports such as `@/features/auth/components/X`.
-- **No hex colors in components:** every color comes from a semantic token.
+- **No hex colors in components:** every color comes from a semantic token. ESLint rejects hex color literals in `app/` and `src/`, except in `src/theme/`.
 - **One source of data types:** the TypeScript types generated from the database.
 - **Stable error codes:** server errors use codes (`QUOTA_EXCEEDED`, `TRANSCRIPTION_FAILED`, …) that are mapped to UI messages in one place.
 - **Secrets stay on the server:** the Gemini key and SMTP credentials live only in Supabase. The app only holds public values (`EXPO_PUBLIC_*`), and reads them only through `src/lib/env.ts`. ESLint rejects `process.env` anywhere else in `app/` and `src/`.
@@ -161,9 +161,10 @@ The app shows the answer with source cards that open the cited entries.
 ### Styling and theming
 
 - **NativeWind with semantic tokens.** Components use class names such as `bg-background`, `bg-surface`, `text-foreground`, `text-muted`, `border-border`, `bg-primary`, never hex values.
-- **One place for tokens.** Tokens are defined once per mode (light and dark) in `src/theme`, so changing the palette means editing one place. The values (palette "Tomato") are listed in the `setup-design-system` entry of `ROADMAP.md`.
+- **One place for tokens.** `src/theme/tokens.ts` is the source of truth. Tokens are defined once per mode (light and dark), so changing the palette means editing that one file. The Tailwind config, the CSS variables, `useTheme()`, and the contrast tests all read from it. It holds the values of palette "Tomato"; the `setup-design-system` entry of `ROADMAP.md` keeps the original request.
+- **Utilities.** Beyond the semantic color classes: `text-display`, `text-title`, `text-heading`, `text-body`, `text-reading`, `text-caption`, `text-caption-sm` (size, line height, letter spacing), `font-geist`, `font-geist-medium`, `font-geist-semibold`, `font-geist-bold`, `px-gutter` (20pt), `rounded-card` (22), `rounded-hero` (30), `bg-mood-1` to `bg-mood-5`, and `bg-record-background`, `bg-record-finish`, `bg-record-progress`. Spacing is Tailwind's 4pt grid (`p-1` is 4pt). Buttons and chips are pills (`rounded-full`).
 - **Theme mode.** The theme follows the system, with a manual override (system / light / dark) in Settings.
-- **Mood colors carry meaning.** Mood is a 1–5 scale (Rough, Low, Okay, Good, Great). A mood is never shown by color alone; it always has its label.
+- **Mood colors carry meaning.** Mood is a 1–5 scale (Rough, Low, Okay, Good, Great), defined in `src/theme/mood.ts`. A mood is never shown by color alone; it always has its label. Mood colors are indicators only (dots, rings, fills): none of them reaches 4.5:1 as text, so the label uses `foreground` or `muted`, never a mood color.
 - **Contrast.** Text contrast must be at least 4.5:1.
 - **Font and icons.** Geist for all text, Lucide for icons.
 - **Base UI (`src/ui`):** Screen, Text (Geist variants), Button, IconButton, TextField, CodeInput, Card, Chip, BottomSheet, Dialog, Toast, EmptyState, ErrorState, Banner, Skeleton, SectionHeader, Icon.

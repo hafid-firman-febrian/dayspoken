@@ -47,27 +47,27 @@
 
 ## 3. Design tokens
 
-- [ ] 3.1 Write `src/theme/contrast.test.ts` for a pure `contrastRatio(a, b)`: black on white is 21, white on white is 1, and `#6E6460` on `#F8F6F5` is about 5.33. Then implement `src/theme/contrast.ts`. Verify: the tests fail before the module exists and pass after.
-- [ ] 3.2 Complete `src/theme/tokens.ts` (design D2): `colors.light` and `colors.dark` with every semantic token including `fab`, `on-fab`, and `scrim`; `moodColors`; `recordPalette`; `typography` (D5 table); `radius`; `spacing`. Add `src/theme/mood.ts` with `MOOD_SCALE` and `MoodLevel`. Verify: `npm run typecheck` passes.
-- [ ] 3.3 Write `src/theme/tokens.test.ts` for the `design-tokens` spec:
+- [x] 3.1 Write `src/theme/contrast.test.ts` for a pure `contrastRatio(a, b)`: black on white is 21, white on white is 1, and `#6E6460` on `#F8F6F5` is about 5.33. Then implement `src/theme/contrast.ts`. Verify: the tests fail before the module exists and pass after.
+- [x] 3.2 Complete `src/theme/tokens.ts` (design D2): `colors.light` and `colors.dark` with every semantic token including `fab`, `on-fab`, and `scrim`; `moodColors`; `recordPalette`; `typography` (D5 table); `radius`; `spacing`. Add `src/theme/mood.ts` with `MOOD_SCALE` and `MoodLevel`. Verify: `npm run typecheck` passes.
+- [x] 3.3 Write `src/theme/tokens.test.ts` for the `design-tokens` spec:
   - the exact light and dark values
   - mood levels 1–5 with their labels, the same in both modes
   - the Record palette, including gradient order
   - every text pair at 4.5:1 or more and every icon pair at 3:1 or more, in both modes; the failure message names the pair and its ratio
 
   Verify: `npm test` passes. Temporarily setting light `muted` to `#A8A29E` makes it fail with that pair named; undo that afterwards.
-- [ ] 3.4 Finish `tailwind.config.ts`: color names from the keys of `colors.light` as `rgb(var(--color-<name>) / <alpha-value>)` plus the mood and Record colors, the `font-geist*` families, the font sizes per style, `rounded-card`, `rounded-hero`, `gutter`, `darkMode: 'class'`, and the NativeWind preset. Add `src/theme/css-variables.ts`, which builds the `--color-*` channel values per mode from `tokens.ts`, with a unit test (for example light `background` → `'248 246 245'`). Verify: `npm test` and `npm run typecheck` pass.
-- [ ] 3.5 Add the hex-color lint rule (design D11.1). Verify with temporary probe files:
+- [x] 3.4 Finish `tailwind.config.ts`: color names from the keys of `colors.light` as `rgb(var(--color-<name>) / <alpha-value>)` plus the mood and Record colors, the `font-geist*` families, the font sizes per style, `rounded-card`, `rounded-hero`, `gutter`, `darkMode: 'class'`, and the NativeWind preset. Add `src/theme/css-variables.ts`, which builds the `--color-*` channel values per mode from `tokens.ts`, with a unit test (for example light `background` → `'248 246 245'`). Verify: `npm test` and `npm run typecheck` pass.
+- [x] 3.5 Add the hex-color lint rule (design D11.1). Verify with temporary probe files:
   - `'#CC3F27'` in `app/` and in `src/ui/` each make `npm run lint` fail with the token message.
   - The same literal in `src/theme/` passes.
 
   Delete the probes. Then `npm run lint` exits 0.
-- [ ] 3.6 Update the docs for where tokens live:
+- [x] 3.6 Update the docs for where tokens live:
   - `STRUCTURE.md`, Styling and theming: `src/theme/tokens.ts` is the source of the values, the class names and the `gutter`/`rounded-card`/`rounded-hero` utilities, mood colors as indicators only, and the hex rule now enforced by lint.
   - `openspec/config.yaml` `context`: the line "The token values are in ROADMAP.md (setup-design-system)" now points to `src/theme/tokens.ts`.
 
   Verify: `git diff STRUCTURE.md openspec/config.yaml` touches only those points, and `openspec instructions proposal --change setup-design-system --json` shows the new context line.
-- [ ] 3.7 Commit `feat(theme): add Tomato design tokens`. Verify: `git status --short` is clean.
+- [x] 3.7 Commit `feat(theme): add Tomato design tokens`. Verify: `git status --short` is clean.
 
 ## 4. Theme mode
 
