@@ -18,6 +18,9 @@ jest.mock('expo-splash-screen', () => ({
   hideAsync: jest.fn(() => Promise.resolve()),
 }));
 
+// The bottom-sheet library ships a Jest mock: sheets present and dismiss without native gestures.
+jest.mock('@gorhom/bottom-sheet', () => require('@gorhom/bottom-sheet/mock'));
+
 // react-native-nitro-modules loads a native TurboModule as soon as it is imported, and there
 // is no native binary in Jest. react-native-mmkv ships its own in-memory mock for
 // createMMKV() under Jest, and only needs this import not to throw.

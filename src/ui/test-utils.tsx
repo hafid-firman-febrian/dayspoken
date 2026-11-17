@@ -4,10 +4,12 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ThemeScope, type ColorScheme } from '@/theme';
 
+import { UiProvider } from './UiProvider';
+
 // Test helper for base UI components. Not exported from src/ui/index.ts.
 // It renders the component the way the app does: inside a theme, with the scheme forced so a
-// test can run the same case in light and dark mode. Providers that later components need
-// (toasts, bottom sheets) are added here when those components arrive.
+// test can run the same case in light and dark mode. It includes the bottom-sheet and
+// toast providers.
 
 /** A phone with a notch and a gesture bar, so safe-area behavior can be asserted. */
 export const TEST_SAFE_AREA = {
@@ -26,7 +28,9 @@ export function renderWithProviders(
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <SafeAreaProvider initialMetrics={TEST_SAFE_AREA}>
-        <ThemeScope scheme={scheme}>{children}</ThemeScope>
+        <ThemeScope scheme={scheme}>
+          <UiProvider>{children}</UiProvider>
+        </ThemeScope>
       </SafeAreaProvider>
     );
   }

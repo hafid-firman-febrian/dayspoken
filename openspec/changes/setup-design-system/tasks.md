@@ -156,28 +156,28 @@
 
 ## 8. Feedback and overlay components
 
-- [ ] 8.1 Build **EmptyState**, **ErrorState**, and **Banner** with tests:
+- [x] 8.1 Build **EmptyState**, **ErrorState**, and **Banner** with tests:
   - EmptyState: its action calls back.
   - ErrorState: default title and button text, retry calls once, retrying shows loading and ignores presses, polite live region.
   - Banner: message and icon, the dismiss button is labeled "Dismiss" and calls back, the action calls back, polite live region.
 
   Verify: `npm test` passes.
-- [ ] 8.2 Build **Toast** (`ToastProvider`, `useToast`) with tests using Jest fake timers:
+- [x] 8.2 Build **Toast** (`ToastProvider`, `useToast`) with tests using Jest fake timers:
   - `show('Entry saved')` renders it and calls `AccessibilityInfo.announceForAccessibility`
   - it hides after 4s, or 6s with an action
   - pressing the action calls back and hides it
   - two quick toasts show one after the other
 
   Verify: `npm test` passes.
-- [ ] 8.3 Build **Dialog** with tests:
+- [x] 8.3 Build **Dialog** with tests:
   - confirm calls `onConfirm` once
   - cancel, backdrop, and `onRequestClose` (Android back) call `onCancel` only
   - a pending promise from `onConfirm` shows loading and blocks cancel until it settles
   - the title is rendered, and the modal has `accessibilityViewIsModal`
 
   Verify: `npm test` passes.
-- [ ] 8.4 Recheck `@gorhom/bottom-sheet`'s latest version and its Gesture Handler note. Install it with `npm i`, and add its Jest mock to `jest.setup.ts`. Add the lint rule that allows it only in `src/ui/**` (design D11.2). Verify: `npx expo-doctor` passes, and a temporary import in `app/` fails lint; delete it afterwards.
-- [ ] 8.5 Build **BottomSheet** with tests (design D8):
+- [x] 8.4 Recheck `@gorhom/bottom-sheet`'s latest version and its Gesture Handler note. Install it with `npm i`, and add its Jest mock to `jest.setup.ts`. Add the lint rule that allows it only in `src/ui/**` (design D11.2). Verify: `npx expo-doctor` passes, and a temporary import in `app/` fails lint; delete it afterwards.
+- [x] 8.5 Build **BottomSheet** with tests (design D8):
   - `open` presents and `false` dismisses
   - backdrop close and swipe close call `onClose` once
   - a `BackHandler` hardware back while open closes the sheet and returns `true`
@@ -185,12 +185,12 @@
   - a TextField inside it renders `BottomSheetTextInput`
 
   Verify: `npm test` passes.
-- [ ] 8.6 Add `BottomSheetModalProvider` and `ToastProvider` to `app/_layout.tsx` (design D10), and export the new components from `src/ui/index.ts`. Rebuild, then verify on the device with a temporary button on the placeholder screen:
+- [x] 8.6 Add `BottomSheetModalProvider` and `ToastProvider` to `app/_layout.tsx` (design D10), and export the new components from `src/ui/index.ts`. Rebuild, then verify on the device with a temporary button on the placeholder screen:
   - the sheet opens, follows dark mode, closes by backdrop, swipe, and back, and keeps a focused TextField above the keyboard
   - a Dialog and a Toast follow dark mode
 
   **Gate:** if the sheet fails with Gesture Handler 3, stop and ask the owner about `@expo/ui/community/bottom-sheet` (design Risks). Remove the temporary button afterwards.
-- [ ] 8.7 Commit `feat(ui): add feedback and overlay components`. Verify: `git status --short` is clean.
+- [x] 8.7 Commit `feat(ui): add feedback and overlay components`. Verify: `git status --short` is clean.
 
 ## 9. Development-only component gallery
 

@@ -2,12 +2,12 @@ import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { ThemeProvider, useAppFonts } from '@/theme';
+import { UiProvider } from '@/ui';
 
 import '../src/theme/global.css';
 
-// Provider order (STRUCTURE.md): gestures, then theme, then the navigator. The splash screen
-// stays up until Geist is loaded. The bottom sheet and toasts are added by the steps that
-// introduce them.
+// Provider order (STRUCTURE.md): gestures, theme, the UI providers (bottom sheet and toasts),
+// then the navigator. The splash screen stays up until Geist is loaded.
 export default function RootLayout() {
   const fontsReady = useAppFonts();
   if (!fontsReady) {
@@ -17,7 +17,9 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider>
-        <Stack screenOptions={{ headerShown: false }} />
+        <UiProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+        </UiProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

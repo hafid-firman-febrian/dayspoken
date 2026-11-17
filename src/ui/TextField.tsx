@@ -1,3 +1,4 @@
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useState } from 'react';
 import {
   Text as NativeText,
@@ -9,6 +10,7 @@ import {
 
 import { useTheme } from '@/theme';
 
+import { useInsideBottomSheet } from './bottom-sheet-context';
 import { FieldMessage } from './FieldMessage';
 
 export type TextFieldProps = Omit<
@@ -42,6 +44,8 @@ export function TextField({
 }: TextFieldProps) {
   const { colors } = useTheme();
   const [focused, setFocused] = useState(false);
+  // Inside a bottom sheet the sheet's own input lets the sheet move up above the keyboard.
+  const Input = useInsideBottomSheet() ? BottomSheetTextInput : TextInput;
 
   const handleFocus = (event: TextInputFocusEvent) => {
     setFocused(true);
@@ -66,7 +70,7 @@ export function TextField({
   return (
     <View className={['gap-1.5', className].filter(Boolean).join(' ')}>
       <NativeText className="font-geist-medium text-caption text-foreground">{label}</NativeText>
-      <TextInput
+      <Input
         {...inputProps}
         testID="text-field-input"
         accessibilityLabel={label}

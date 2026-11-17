@@ -15,6 +15,11 @@ const mmkvPath = {
   message: 'Import MMKV only inside src/lib/mmkv.ts; use its kvStorage adapter.',
 };
 
+const bottomSheetPath = {
+  name: '@gorhom/bottom-sheet',
+  message: 'Use the BottomSheet component from @/ui. The library is imported only inside src/ui.',
+};
+
 module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
@@ -60,15 +65,15 @@ module.exports = defineConfig([
     },
   },
   {
-    // STRUCTURE.md: storage libraries stay behind one adapter. MMKV is imported only in
-    // src/lib/mmkv.ts.
+    // STRUCTURE.md: libraries stay behind one adapter. MMKV is imported only in src/lib/mmkv.ts,
+    // and the bottom-sheet library only inside src/ui.
     files: ['app/**/*.{js,jsx,ts,tsx}', 'src/**/*.{js,jsx,ts,tsx}'],
     ignores: ['src/lib/mmkv.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
-          paths: [mmkvPath],
+          paths: [mmkvPath, bottomSheetPath],
           patterns: [featureImportPattern],
         },
       ],
