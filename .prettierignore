@@ -3,6 +3,7 @@ openspec/
 *.md
 
 # Generated
+supabase/functions/_shared/database.types.ts
 android/
 ios/
 .expo/
