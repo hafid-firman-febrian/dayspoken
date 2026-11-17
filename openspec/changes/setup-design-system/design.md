@@ -326,3 +326,11 @@ Conventional Commits on `feat/setup-design-system`, one per task group. Each gro
 - **Compatibility to recheck at apply (it may have changed):**
   - NativeWind's `latest` tag and its SDK note
   - whether `@gorhom/bottom-sheet` names Gesture Handler 3
+
+## Open Questions
+
+None of these changes the specs or the tasks of this change, so they can be answered later.
+
+- **Android navigation bar in dark mode.** On the emulator (SDK 58, 3-button navigation) the system navigation bar stays light grey with pale icons while the app is dark. Fixing it probably needs `expo-navigation-bar` (button style per mode) or a native theme change. That is a new dependency, so it was left out. Decide it in `add-app-shell-navigation`, which owns the bottom area and the floating tab bar.
+- **How fast System mode follows the device.** After switching the theme from Dark back to System, the app followed a device appearance change after about 5 to 11 seconds in one emulator measurement. In the first test (task 4.4, with System never switched by hand) it took about 2 seconds or less. The cause is not known: it may be the emulator, or the `colorScheme.set('system')` path. Measure it on a real phone (for example with the APK from `prepare-portfolio-release`), and change the code only if it is slow there.
+- **Dragging from a text field.** In automated runs, a swipe that started on a text field focused it and opened the keyboard. This was not checked by hand yet. Drag the gallery with a finger, starting on a text field. If it reproduces, fix `TextField`; if not, it was the test tool and this item can be removed.
