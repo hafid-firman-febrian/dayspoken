@@ -6,7 +6,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hafidfirmanfebrian.dayspoken"
@@ -21,7 +21,19 @@
       },
       "predictiveBackGestureEnabled": false
     },
-    "plugins": ["expo-router", "expo-status-bar"],
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F8F6F5",
+          "dark": {
+            "backgroundColor": "#100A09"
+          }
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     }

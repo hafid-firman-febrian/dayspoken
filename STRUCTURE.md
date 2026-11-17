@@ -78,6 +78,8 @@ dayspoken/
 
 - S11 Edit Entry and S12 Filter are bottom sheets, not routes.
 - S14 App Lock (Should) is a gate shown when the app opens.
+- `app/dev/gallery.tsx` is the component gallery: every base component, its states, and the design tokens, in light and dark. It is for development only: in a production build it redirects to the home route, and the home placeholder shows its link only in development. It renders `ComponentGallery` from `src/ui/gallery/`.
+- `src/ui/gallery/` is the one place in `src/ui` that composes base components into a screen. It belongs to the design system, holds no business logic, fetches nothing, and is not exported from `@/ui`. Its theme switch is the real theme-mode preference.
 
 ## Where logic lives
 
@@ -92,7 +94,7 @@ dayspoken/
 - **State has two homes:** server data lives only in TanStack Query. Zustand holds UI state only (the recording flow, preferences).
 - **`src/ui` is pure UI:** it never fetches data and holds no business logic.
 - **Features stay isolated:** a feature imports another only through that feature's `index.ts`. ESLint rejects deep imports such as `@/features/auth/components/X`.
-- **No hex colors in components:** every color comes from a semantic token.
+- **No hex colors in components:** every color comes from a semantic token. ESLint rejects hex color literals in `app/` and `src/`, except in `src/theme/`.
 - **One source of data types:** the TypeScript types generated from the database.
 - **Stable error codes:** server errors use codes (`QUOTA_EXCEEDED`, `TRANSCRIPTION_FAILED`, …) that are mapped to UI messages in one place.
 - **Secrets stay on the server:** the Gemini key and SMTP credentials live only in Supabase. The app only holds public values (`EXPO_PUBLIC_*`), and reads them only through `src/lib/env.ts`. ESLint rejects `process.env` anywhere else in `app/` and `src/`.
@@ -161,20 +163,38 @@ The app shows the answer with source cards that open the cited entries.
 ### Styling and theming
 
 - **NativeWind with semantic tokens.** Components use class names such as `bg-background`, `bg-surface`, `text-foreground`, `text-muted`, `border-border`, `bg-primary`, never hex values.
-- **One place for tokens.** Tokens are defined once per mode (light and dark) in `src/theme`, so changing the palette means editing one place. The values (palette "Tomato") are listed in the `setup-design-system` entry of `ROADMAP.md`.
+- **One place for tokens.** `src/theme/tokens.ts` is the source of truth. Tokens are defined once per mode (light and dark), so changing the palette means editing that one file. The Tailwind config, the CSS variables, `useTheme()`, and the contrast tests all read from it. It holds the values of palette "Tomato"; the `setup-design-system` entry of `ROADMAP.md` keeps the original request.
+- **Utilities.** Beyond the semantic color classes: `text-display`, `text-title`, `text-heading`, `text-body`, `text-reading`, `text-caption`, `text-caption-sm` (size, line height, letter spacing), `font-geist`, `font-geist-medium`, `font-geist-semibold`, `font-geist-bold`, `px-gutter` (20pt), `rounded-card` (22), `rounded-hero` (30), `bg-mood-1` to `bg-mood-5`, and `bg-record-background`, `bg-record-finish`, `bg-record-progress`. Spacing is Tailwind's 4pt grid (`p-1` is 4pt). Buttons and chips are pills (`rounded-full`).
 - **Theme mode.** The theme follows the system, with a manual override (system / light / dark) in Settings.
-- **Mood colors carry meaning.** Mood is a 1–5 scale (Rough, Low, Okay, Good, Great). A mood is never shown by color alone; it always has its label.
+  - The preference is a Zustand store in `src/theme/theme-mode-store.ts` (`useThemeMode()`), saved in MMKV under `preferences.theme`. MMKV is synchronous, so the saved mode is known before the first render. An unknown stored value becomes `system`.
+  - `ThemeProvider` resolves the scheme and applies it everywhere: the CSS variables behind the color classes, `useTheme()` for values read in code, the status bar, the native root background, the navigation theme, and the native appearance.
+  - `ThemeScope scheme="dark"` renders a subtree in one scheme whatever the mode is. Always-dark screens (Record) use it.
+- **Root providers** (`app/_layout.tsx`), outermost first: the font gate (`useAppFonts()` renders nothing and keeps the splash screen until Geist is loaded, or has failed), `GestureHandlerRootView`, `ThemeProvider`, `UiProvider` (the bottom sheet and toast providers from `@/ui`), the navigator. Each later step that needs a provider adds it here and updates this line.
+- **Fonts.** Geist ships inside the app (`src/theme/fonts.ts`, one import per weight, so only four files are bundled) and loads offline. Text sets only `fontFamily`, never `fontWeight`: React Native needs one family per weight.
+- **Splash colors** live in `app.json` as copies of the `background` tokens, and a test keeps them in step. `expo run:android` does not regenerate an existing `android/` folder, so after changing `app.json` plugins or splash colors, run `npx expo prebuild --platform android` and rebuild.
+- **Mood colors carry meaning.** Mood is a 1–5 scale (Rough, Low, Okay, Good, Great), defined in `src/theme/mood.ts`. A mood is never shown by color alone; it always has its label. Mood colors are indicators only (dots, rings, fills): none of them reaches 4.5:1 as text, so the label uses `foreground` or `muted`, never a mood color.
 - **Contrast.** Text contrast must be at least 4.5:1.
 - **Font and icons.** Geist for all text, Lucide for icons.
 - **Base UI (`src/ui`):** Screen, Text (Geist variants), Button, IconButton, TextField, CodeInput, Card, Chip, BottomSheet, Dialog, Toast, EmptyState, ErrorState, Banner, Skeleton, SectionHeader, Icon.
+  - `@gorhom/bottom-sheet` is imported only inside `src/ui` (ESLint enforces it). Other code uses `BottomSheet`, and a `TextField` inside a sheet switches to the sheet's own input by itself.
+  - Import them from `@/ui`. `src/ui` is pure UI: ESLint rejects any import of feature code from it.
+  - Write class names out in full (`'bg-surface rounded-card'`, or a map of full names). Tailwind only generates classes it can read in the source, so a name built from a variable is silently missing.
 - **Feature UI** lives in its feature's `components/` folder and is built from base UI: FloatingTabBar, TodayCard, WeekMoodStrip, MoodChip, MoodPicker, StreakBadge, VoiceOrb, RecordControls, ProgressBar, EntryCard, CitationCard, AudioPlayer, ProcessingStepper.
-- **Screen states.** Empty, loading, error, offline, and quota-reached (per user or global) are states of each screen, not separate screens.
+- **Screen states.** Empty, loading, error, offline, and quota-reached (per user or global) are states of each screen, not separate screens. Each state has one base component, so no feature invents its own:
+
+  | State | Component |
+  |---|---|
+  | Empty | `EmptyState` |
+  | Loading | `Skeleton` shaped like the content, or `loading` on a `Button` or `ErrorState` for actions |
+  | Error | `ErrorState` (a screen or section), the error state of `TextField` and `CodeInput` (fields), `Toast` (transient) |
+  | Offline | `Banner` (neutral, "You're offline") |
+  | Quota reached | `Banner` (accent), or `EmptyState` when the whole screen is blocked |
 
 ### State
 
 - **Server data:** TanStack Query only.
 - **UI state:** Zustand only (the recording flow, preferences).
-- **Local storage:** MMKV for cache, preferences, and audio waiting to upload. The session is stored securely.
+- **Local storage:** MMKV for cache, preferences, and audio waiting to upload. The session is stored securely. MMKV is imported only in `src/lib/mmkv.ts` (ESLint enforces it); other code uses its `kvStorage` adapter.
 
 ### Errors
 
@@ -208,6 +228,8 @@ The app shows the answer with source cards that open the cited entries.
 ### Testing
 
 - **Unit and component tests:** Jest and React Native Testing Library. Each test sits next to the file it tests.
+- **Base UI tests.** Each component in `src/ui` has a test that checks behavior and accessibility (role, label, state), run in light and dark mode with `describe.each(SCHEMES)`. Render with `renderWithProviders(ui, { scheme })` from `src/ui/test-utils.tsx`: it adds the safe area and a theme with the scheme forced. Class names are not compiled to styles under Jest, so tests read `className` and, for colors read in code, the values the component passes on.
+- **Native libraries in Jest** are mocked in `jest.setup.ts` (gesture handler, Reanimated, fonts, splash screen, Nitro). MMKV has its own in-memory mock.
 - **Route tests are the exception.** Expo Router treats every file in `app/` as a route, so route tests live in `__tests__/app/` and mirror the route path (`__tests__/app/index.test.tsx`).
 - **Edge Functions:** Deno tests.
 - **End-to-end:** Maestro flows live in `e2e/`.
