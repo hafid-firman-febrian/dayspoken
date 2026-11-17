@@ -1,0 +1,45 @@
+name: Keep alive
+
+# The Supabase Free plan pauses a project after about a week of low activity. This workflow
+# calls ping() once a day through the public API, which counts as activity. A failed run
+# means the project did not answer (for example it is already paused): GitHub then emails
+# the repository owner.
+#
+# Limits of GitHub schedules (also in STRUCTURE.md):
+#   - scheduled workflows run only on the default branch;
+#   - in a public repository GitHub switches them off after 60 days without repository
+#     activity: re-enable this workflow from the Actions tab (or commit any change to it);
+#   - runs can be delayed or dropped under load, so the time avoids the top of the hour.
+
+on:
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+# The job only makes an HTTP request, so it needs no permission on the repository.
+permissions: {}
+
+jobs:
+  ping:
+    name: Ping the Supabase project
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY are repository variables, not secrets: both are
+    # public values (the app bundles the same ones). Where they are not set, for example in a
+    # fork, the job is skipped instead of failing.
+    if: ${{ vars.SUPABASE_URL != '' }}
+    env:
+      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - name: Call ping()
+        run: |
+          set -euo pipefail
+          response=$(curl --silent --show-error --fail \
+            --retry 3 --retry-all-errors --retry-delay 20 --max-time 30 \
+            --request POST "$SUPABASE_URL/rest/v1/rpc/ping" \
+            --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+            --header "Content-Type: application/json" \
+            --data '{}')
+          echo "Response: $response"
+          test "$response" = '"ok"'

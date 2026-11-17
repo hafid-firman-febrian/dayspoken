@@ -1,0 +1,75 @@
+name: Database
+
+# Replays every migration on a fresh local Supabase stack, runs the database tests and the
+# API checks, and fails when the generated types are out of date. It uses only the local
+# stack and the CLI version pinned in package-lock.json: no secret, no token, no cloud project,
+# so it also works on pull requests from forks.
+#
+# It runs only when the backend changes, so frontend-only pull requests stay fast (ci.yml
+# still runs on every pull request).
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'supabase/**'
+      - 'scripts/db-types.sh'
+      - 'package-lock.json'
+      - '.github/workflows/database.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/**'
+      - 'scripts/db-types.sh'
+      - 'package-lock.json'
+      - '.github/workflows/database.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: database-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  database:
+    name: Migrations, database tests, API checks, types
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Only the services the checks use. Studio, mail, logs, edge functions, realtime, image
+      # transforms, and the pooler are left out to save time and memory.
+      - name: Start the local Supabase stack
+        run: npx supabase start -x studio,mailpit,logflare,vector,edge-runtime,realtime,imgproxy,supavisor
+
+      - name: Replay every migration from empty
+        run: npm run db:reset
+
+      - name: Database tests
+        run: npm run db:test
+
+      - name: API checks
+        run: npm run db:smoke
+
+      - name: Generated types are up to date
+        run: npm run db:types:check
+
+      - name: Show containers when something failed
+        if: ${{ failure() }}
+        run: docker ps -a
+
+      - name: Stop the stack
+        if: ${{ always() }}
+        run: npx supabase stop
