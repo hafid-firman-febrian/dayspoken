@@ -92,11 +92,11 @@ Do this group before ticking anything in `ROADMAP.md`.
   - With `EXPO_PUBLIC_APP_ENV=production` in `.env`, the development build shows "production" after Metro restarts.
   - Remove `.env` afterwards.
 - [x] 8.4 Add `.env.example` with `EXPO_PUBLIC_APP_ENV=development`, a comment on the allowed values and the default, and a note that `EXPO_PUBLIC_*` values are public and never secrets. Verify: after `touch .env .env.local`, `git status --short` lists neither file. Delete both afterwards.
-- [ ] 8.5 Commit `feat: add typed public env config`. Verify: `git status --short` is clean.
+- [x] 8.5 Commit `feat: add typed public env config`. Verify: `git status --short` is clean.
 
 ## 9. CI workflow
 
-- [ ] 9.1 Check the latest major versions of `actions/checkout` and `actions/setup-node` on their release pages. Then write `.github/workflows/ci.yml` (design D10):
+- [x] 9.1 Check the latest major versions of `actions/checkout` and `actions/setup-node` on their release pages. Then write `.github/workflows/ci.yml` (design D10):
   - triggers: `pull_request` and `push` on `main`
   - `contents: read`
   - concurrency that cancels older PR runs
@@ -105,7 +105,7 @@ Do this group before ticking anything in `ROADMAP.md`.
   - Node from `.nvmrc`, with the npm cache
 
   Verify: `npx --yes yaml-lint .github/workflows/ci.yml` passes. The real proof is the PR run in the workflow follow-up.
-- [ ] 9.2 Run the fresh-clone check:
+- [x] 9.2 Run the fresh-clone check:
   1. `git clone` the local repository into a temporary directory and check out the branch.
   2. Run `npm ci`, `npm run typecheck`, `npm run lint`, and `npm test` there, with no `.env` and no dev server.
 
