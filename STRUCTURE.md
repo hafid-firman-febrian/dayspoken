@@ -164,6 +164,10 @@ The app shows the answer with source cards that open the cited entries.
 - **One place for tokens.** `src/theme/tokens.ts` is the source of truth. Tokens are defined once per mode (light and dark), so changing the palette means editing that one file. The Tailwind config, the CSS variables, `useTheme()`, and the contrast tests all read from it. It holds the values of palette "Tomato"; the `setup-design-system` entry of `ROADMAP.md` keeps the original request.
 - **Utilities.** Beyond the semantic color classes: `text-display`, `text-title`, `text-heading`, `text-body`, `text-reading`, `text-caption`, `text-caption-sm` (size, line height, letter spacing), `font-geist`, `font-geist-medium`, `font-geist-semibold`, `font-geist-bold`, `px-gutter` (20pt), `rounded-card` (22), `rounded-hero` (30), `bg-mood-1` to `bg-mood-5`, and `bg-record-background`, `bg-record-finish`, `bg-record-progress`. Spacing is Tailwind's 4pt grid (`p-1` is 4pt). Buttons and chips are pills (`rounded-full`).
 - **Theme mode.** The theme follows the system, with a manual override (system / light / dark) in Settings.
+  - The preference is a Zustand store in `src/theme/theme-mode-store.ts` (`useThemeMode()`), saved in MMKV under `preferences.theme`. MMKV is synchronous, so the saved mode is known before the first render. An unknown stored value becomes `system`.
+  - `ThemeProvider` resolves the scheme and applies it everywhere: the CSS variables behind the color classes, `useTheme()` for values read in code, the status bar, the native root background, the navigation theme, and the native appearance.
+  - `ThemeScope scheme="dark"` renders a subtree in one scheme whatever the mode is. Always-dark screens (Record) use it.
+- **Root providers** (`app/_layout.tsx`), outermost first: `GestureHandlerRootView`, `ThemeProvider`, the navigator. Each later step that needs a provider adds it here and updates this line.
 - **Mood colors carry meaning.** Mood is a 1–5 scale (Rough, Low, Okay, Good, Great), defined in `src/theme/mood.ts`. A mood is never shown by color alone; it always has its label. Mood colors are indicators only (dots, rings, fills): none of them reaches 4.5:1 as text, so the label uses `foreground` or `muted`, never a mood color.
 - **Contrast.** Text contrast must be at least 4.5:1.
 - **Font and icons.** Geist for all text, Lucide for icons.
@@ -175,7 +179,7 @@ The app shows the answer with source cards that open the cited entries.
 
 - **Server data:** TanStack Query only.
 - **UI state:** Zustand only (the recording flow, preferences).
-- **Local storage:** MMKV for cache, preferences, and audio waiting to upload. The session is stored securely.
+- **Local storage:** MMKV for cache, preferences, and audio waiting to upload. The session is stored securely. MMKV is imported only in `src/lib/mmkv.ts` (ESLint enforces it); other code uses its `kvStorage` adapter.
 
 ### Errors
 

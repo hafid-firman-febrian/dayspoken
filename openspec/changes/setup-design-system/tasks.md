@@ -71,34 +71,34 @@
 
 ## 4. Theme mode
 
-- [ ] 4.1 Install `react-native-mmkv` and `react-native-nitro-modules` with `npm i`, and `zustand`. Add `src/lib/mmkv.ts` (design D7). Add the lint rule that allows `react-native-mmkv` only there (design D11.2), repeating the existing feature-import pattern in every block that sets `no-restricted-imports`. Verify:
+- [x] 4.1 Install `react-native-mmkv` and `react-native-nitro-modules` with `npm i`, and `zustand`. Add `src/lib/mmkv.ts` (design D7). Add the lint rule that allows `react-native-mmkv` only there (design D11.2), repeating the existing feature-import pattern in every block that sets `no-restricted-imports`. Verify:
   - `npx expo-doctor` passes.
   - A temporary import of `react-native-mmkv` in `src/theme/` fails lint, and the existing `@/features/demo/components/X` probe still fails lint. Delete both probes.
-- [ ] 4.2 Write tests first, then implement:
+- [x] 4.2 Write tests first, then implement:
   - `src/theme/resolve-scheme.ts` with a test: `system` + dark → dark, `system` + no value → light, and `light` + dark → light.
   - `src/theme/theme-mode-store.ts` (Zustand `persist` over the MMKV adapter, key `preferences.theme`, Zod-validated `merge`) with a test: the default is `system`, `setMode('dark')` persists, a restart restores it, and an unknown stored value becomes `system`.
   - Set up the MMKV mock as in design D14 inside a new `jest.setup.ts`, registered in `jest.config.js`.
 
   Verify: the tests fail before the modules exist and pass after.
-- [ ] 4.3 Implement `ThemeProvider`, `ThemeScope`, and `useTheme` in `src/theme/` (design D3): the `vars()` root view, the context `{ scheme, colors }`, the status bar style, `SystemUI.setBackgroundColorAsync`, the React Navigation theme from tokens, and `colorScheme.set(mode)`. Export the public API from `src/theme/index.ts`. Write `src/theme/ThemeProvider.test.tsx`:
+- [x] 4.3 Implement `ThemeProvider`, `ThemeScope`, and `useTheme` in `src/theme/` (design D3): the `vars()` root view, the context `{ scheme, colors }`, the status bar style, `SystemUI.setBackgroundColorAsync`, the React Navigation theme from tokens, and `colorScheme.set(mode)`. Export the public API from `src/theme/index.ts`. Write `src/theme/ThemeProvider.test.tsx`:
   - `useTheme()` returns dark colors when the mode is `dark`
   - in `system` mode it follows a mocked `Appearance` change without remounting
   - `ThemeScope scheme="dark"` inside light mode gives dark colors to its children only
   - dark → system → device light gives light colors
 
   Verify: `npm test` passes.
-- [ ] 4.4 Wire `app/_layout.tsx` (design D10): import `global.css`, then `GestureHandlerRootView` → `ThemeProvider` → `Stack`. Add the bottom-sheet and toast providers later, in group 8. Install `react-native-gesture-handler` now with `npx expo install`. Rebuild and verify on the device:
+- [x] 4.4 Wire `app/_layout.tsx` (design D10): import `global.css`, then `GestureHandlerRootView` → `ThemeProvider` → `Stack`. Add the bottom-sheet and toast providers later, in group 8. Install `react-native-gesture-handler` now with `npx expo install`. Rebuild and verify on the device:
   - with the device in dark appearance, the placeholder screen background is the dark `background`
   - switching the device appearance while the app is open switches the app
   - the status bar content is light in dark mode
-- [ ] 4.5 Update `STRUCTURE.md`:
+- [x] 4.5 Update `STRUCTURE.md`:
   - the root provider order in `app/_layout.tsx`
   - the theme-mode preference as a Zustand store in `src/theme` backed by `src/lib/mmkv.ts`
   - `ThemeScope` for always-dark screens (Record)
   - the MMKV import rule
 
   Verify: `git diff STRUCTURE.md` shows only these points.
-- [ ] 4.6 Commit `feat(theme): add theme mode with system default and override`. Verify: `git status --short` is clean.
+- [x] 4.6 Commit `feat(theme): add theme mode with system default and override`. Verify: `git status --short` is clean.
 
 ## 5. Geist fonts
 

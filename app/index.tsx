@@ -6,9 +6,11 @@ import { env } from '@/lib/env';
 export default function IndexScreen() {
   return (
     <View style={styles.container}>
-      <Text accessibilityRole="header">Dayspoken</Text>
-      <Text>The development build is running.</Text>
-      <Text>Environment: {env.appEnv}</Text>
+      <Text accessibilityRole="header" className="text-foreground">
+        Dayspoken
+      </Text>
+      <Text className="text-foreground">The development build is running.</Text>
+      <Text className="text-foreground">Environment: {env.appEnv}</Text>
     </View>
   );
 }

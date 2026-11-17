@@ -3,6 +3,13 @@ const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
 
+// ESLint does not merge the options of one rule across config blocks: a later block replaces
+// them. Every block that sets `no-restricted-imports` therefore repeats this pattern.
+const featureImportPattern = {
+  group: ['@/features/*/*'],
+  message: 'Import a feature only through its index.ts (for example @/features/auth).',
+};
+
 module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
@@ -44,15 +51,25 @@ module.exports = defineConfig([
     // STRUCTURE.md: features import each other only through their index.ts.
     files: ['**/*.{js,jsx,ts,tsx}'],
     rules: {
+      'no-restricted-imports': ['error', { patterns: [featureImportPattern] }],
+    },
+  },
+  {
+    // STRUCTURE.md: storage libraries stay behind one adapter. MMKV is imported only in
+    // src/lib/mmkv.ts.
+    files: ['app/**/*.{js,jsx,ts,tsx}', 'src/**/*.{js,jsx,ts,tsx}'],
+    ignores: ['src/lib/mmkv.ts'],
+    rules: {
       'no-restricted-imports': [
         'error',
         {
-          patterns: [
+          paths: [
             {
-              group: ['@/features/*/*'],
-              message: 'Import a feature only through its index.ts (for example @/features/auth).',
+              name: 'react-native-mmkv',
+              message: 'Import MMKV only inside src/lib/mmkv.ts; use its kvStorage adapter.',
             },
           ],
+          patterns: [featureImportPattern],
         },
       ],
     },
