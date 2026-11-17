@@ -65,16 +65,16 @@ Do this group before ticking anything in `ROADMAP.md`.
   - `no-restricted-properties` on `process.env` for `app/**` and `src/**`, except `src/lib/env.ts`.
   - `no-restricted-imports` with the pattern `@/features/*/*`.
   - Verify with temporary probe files: a `process.env.FOO` read in `app/` and an import of `@/features/demo/components/X` each make `npm run lint` fail with the rule's message. A badly formatted line also makes it fail. Delete the probes, then `npm run lint` exits 0.
-- [ ] 6.3 Commit `chore: add ESLint and Prettier`. Verify: `git status --short` is clean.
+- [x] 6.3 Commit `chore: add ESLint and Prettier`. Verify: `git status --short` is clean.
 
 ## 7. Jest with React Native Testing Library
 
-- [ ] 7.1 Install the test tools (design D8):
+- [x] 7.1 Install the test tools (design D8):
   - `npx expo install jest-expo jest @types/jest -- --save-dev`.
   - `@testing-library/react-native` plus the peer its installed major version needs (`test-renderer` for v14).
   - Add `jest.config.js` with preset `jest-expo` and a `moduleNameMapper` for `@/`, and the script `"test": "jest"`.
   - Verify: `npx expo-doctor` and `npm ls @testing-library/react-native` report no peer dependency errors.
-- [ ] 7.2 Write `__tests__/app/index.test.tsx`. It renders the placeholder route and finds its text with RNTL. Verify: `npm test` passes. A deliberately wrong expected text makes it fail; undo that afterwards.
+- [x] 7.2 Write `__tests__/app/index.test.tsx`. It renders the placeholder route and finds its text with RNTL. Verify: `npm test` passes. A deliberately wrong expected text makes it fail; undo that afterwards.
 - [ ] 7.3 Commit `test: set up Jest with React Native Testing Library`. Verify: `git status --short` is clean.
 
 ## 8. Public env config
