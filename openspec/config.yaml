@@ -66,10 +66,14 @@ context: |
     TanStack Query, Zustand, Zod, MMKV, @gorhom/bottom-sheet, lucide-react-native,
     expo-notifications (local), expo-local-authentication.
   - Backend: Supabase (Postgres + pgvector, Auth, Storage, Edge Functions on Deno,
-    Realtime, cron), Supabase CLI, SQL migrations, generated DB types.
+    Realtime, cron), Supabase CLI (pinned dev dependency), SQL migrations, generated DB
+    types in supabase/functions/_shared/database.types.ts. Development uses the local
+    stack (Docker); production is one cloud Free project that only receives migrations.
+    The app uses the publishable key (sb_publishable_...), never a secret key.
   - AI: the Gemini API free tier (Flash models) for transcription, entry analysis, Ask,
     and embeddings, behind an AI adapter configured per environment (provider + model
-    per task). Embeddings always come from one model. Development and production use
+    per task). Embeddings always come from one model (gemini-embedding-2, 768
+    dimensions, vector(768)). Development and production use
     separate Google projects. The app never calls AI providers. A Cloudflare fallback
     is Later.
   - Quality: Jest + React Native Testing Library, Maestro E2E, Deno tests, ESLint +
@@ -79,7 +83,8 @@ context: |
   - app/ holds thin Expo Router routes. src/features/<feature>/ holds components, hooks,
     api.ts, types.ts, and index.ts (its public API). src/ui holds base components (no
     business logic, no data fetching). Also src/theme, src/lib, src/utils (pure
-    functions), supabase/ (migrations, functions/_shared, seed.sql), e2e/, docs/.
+    functions), supabase/ (migrations, tests, functions/_shared, seed.sql), scripts/,
+    e2e/, docs/.
   - Business rules, quotas, and all AI calls live on the server (Edge Functions, DB
     constraints, RLS on every table).
   - Server data lives only in TanStack Query. Zustand holds UI state only.
@@ -96,6 +101,8 @@ context: |
   Verify at implementation time (do not assume): Gemini free-tier quotas and data terms;
   Cloudflare Workers AI quotas; Expo SDK vs NativeWind compatibility; Geist availability
   for expo-font; Supabase Free pause policy and SMTP limits; EAS free build limits.
+  Gemini free-tier content is used by Google to improve its products: decide how to
+  handle that for journal text in add-ai-processing-pipeline.
 
 rules:
   proposal:
