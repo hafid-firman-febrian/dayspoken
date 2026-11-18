@@ -424,7 +424,7 @@ Out of scope: Ask as chat (Later: add-ask-chat); weekly recap (Later: add-weekly
 - Today's usage: recordings and questions left.
 - Theme: system / light / dark.
 - The privacy notice, with a link to the privacy policy page.
-- Sign out.
+- Sign out. `add-email-otp-auth` put a temporary "Sign out" button on the home placeholder (`app/index.tsx`) so sign out could be used and checked. Move the behavior here (the `useSignOut` hook from `@/features/auth`) and make sure no second sign-out button is left behind.
 
 Delete Account (S13):
 - Explain the consequences, and ask the user to type "DELETE" to confirm.
@@ -445,6 +445,7 @@ Out of scope: reminder time (add-daily-reminder); app lock (add-app-lock); the p
 
 ```text
 /openspec-propose add-demo-account: Make "Try the demo" on Welcome work.
+- `add-email-otp-auth` left a "Try the demo" button on Welcome that only shows a "The demo is coming soon." toast (`WelcomeScreen`, `src/features/auth`). Replace that placeholder.
 - It signs into a demo account (profiles.is_demo = true) without email OTP, so Upwork clients can try the app without signing up.
 - Seed about 20 realistic entries in supabase/seed.sql so Home, Journal, and Ask look alive. Seeded entries need transcripts, analysis, and embeddings so Ask works; decide in design how the embeddings are produced.
 - Reset the demo data every night with Supabase cron and the Edge Function reset-demo.
