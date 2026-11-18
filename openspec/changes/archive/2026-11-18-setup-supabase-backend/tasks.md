@@ -51,9 +51,9 @@
 
 ## 7. Workflows
 
-- [ ] 7.1 Add `.github/workflows/database.yml` (path filter on `supabase/**`, `package-lock.json`, and the file; Node from `.nvmrc`; `npm ci`; start the stack; `db:reset`; `db:test`; `db:smoke`; `db:types:check`; stop) with no secrets and no `link`; verify the YAML parses (`npx --yes yaml valid` or the equivalent in the pinned toolchain) and, after the push in group 9, that the run on the pull request is green
+- [x] 7.1 Add `.github/workflows/database.yml` (path filter on `supabase/**`, `package-lock.json`, and the file; Node from `.nvmrc`; `npm ci`; start the stack; `db:reset`; `db:test`; `db:smoke`; `db:types:check`; stop) with no secrets and no `link`; verify the YAML parses (`npx --yes yaml valid` or the equivalent in the pinned toolchain) and, after the push in group 9, that the run on the pull request is green
 - [x] 7.2 Add `.github/workflows/keep-alive.yml` (`schedule` at `17 5 * * *`, `workflow_dispatch`, `permissions: {}`, job guarded by `vars.SUPABASE_URL != ''`, `curl --fail --retry 3 --retry-all-errors --retry-delay 20` to `/rest/v1/rpc/ping` with the `apikey` header); verify by reading the file against `specs/keep-alive` (no `secrets.` reference, no permissions) and by running its curl line by hand against the local stack
-- [ ] 7.3 Dry run the guard: temporarily run the job's shell step with `SUPABASE_URL` empty and confirm the step is skipped with no failure (for example with `act` if installed, otherwise by reasoning from the `if:` condition and a manual run after group 8)
+- [x] 7.3 Dry run the guard: temporarily run the job's shell step with `SUPABASE_URL` empty and confirm the step is skipped with no failure (for example with `act` if installed, otherwise by reasoning from the `if:` condition and a manual run after group 8)
 
 ## 8. Cloud project (owner steps, agent guides each one in Indonesian)
 
@@ -61,7 +61,7 @@
 - [x] 8.2 Owner runs `npx supabase login` and `npx supabase link --project-ref <ref>` (password typed by the owner, never pasted into chat or a file); verify `npx supabase migration list --remote` shows the local migrations and none remote
 - [x] 8.3 Owner runs `npx supabase db push --remote` (in CLI v3 `db` commands target the local stack unless `--remote` is given); verify `npx supabase migration list --remote` shows every migration on both sides, the dashboard shows the four tables with RLS on, the bucket `audio` as private, and the `vector` extension enabled
 - [x] 8.4 Run the anonymous checks against the cloud project with the publishable key from the dashboard (table read returns no rows or an error, `ping` returns `ok`); verify both outputs
-- [ ] 8.5 Owner adds the repository variables `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (Settings, Secrets and variables, Actions, Variables tab) and starts the keep-alive workflow by hand from the Actions tab once it is on `main`; verify the run is green (after merge, see Workflow follow-up)
+- [x] 8.5 Owner adds the repository variables `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (Settings, Secrets and variables, Actions, Variables tab) and starts the keep-alive workflow by hand from the Actions tab once it is on `main`; verify the run is green (after merge, see Workflow follow-up)
 
 ## 9. Documentation, ROADMAP, and final checks
 
@@ -70,7 +70,7 @@
 - [x] 9.3 Run `npm run typecheck`, `npm run lint`, `npm test -- --ci`, `npm run db:reset`, `npm run db:test`, `npm run db:smoke`, and `npm run db:types:check`; verify all exit 0
 - [x] 9.4 Fresh-clone check: clone the branch into a temporary folder with no `.env`, run `npm ci`, typecheck, lint, test, `db:start`, `db:test`, `db:smoke`; verify all pass and that `git grep -nE "sb_secret_|eyJ|password"` finds no real secret in the repository
 - [x] 9.5 Tick Applied for entry 3 in ROADMAP.md, make Conventional Commits (no AI attribution, only the configured author), and push the branch; verify `git log --oneline main..HEAD` and that the remote branch matches
-- [ ] 9.6 Give the owner the pull request title and a ready-to-paste description (English); owner opens the pull request, waits for both workflows (`ci.yml` and `database.yml`) to be green, and merges; verify via the public GitHub API that the checks passed
+- [x] 9.6 Give the owner the pull request title and a ready-to-paste description (English); owner opens the pull request, waits for both workflows (`ci.yml` and `database.yml`) to be green, and merges; verify via the public GitHub API that the checks passed
 
 ## Workflow follow-up
 

@@ -134,7 +134,7 @@ Out of scope: feature UI such as FloatingTabBar, TodayCard, WeekMoodStrip, Voice
 - [x] Proposed
 - [x] Reviewed
 - [x] Applied
-- [ ] Archived
+- [x] Archived
 
 **Scope:** Supabase project (local and cloud), migrations, RLS, private audio bucket, generated types, app client, and the keep-alive ping.
 
