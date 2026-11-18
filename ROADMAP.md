@@ -168,8 +168,8 @@ Out of scope: auth screens and SMTP (add-email-otp-auth); Edge Functions (add-ai
 
 ### 4. add-email-otp-auth
 
-- [ ] Proposed
-- [ ] Reviewed
+- [x] Proposed
+- [x] Reviewed
 - [ ] Applied
 - [ ] Archived
 
