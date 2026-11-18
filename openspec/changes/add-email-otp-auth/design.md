@@ -161,8 +161,9 @@ The guide lives in `docs/auth-email-setup.md` and records the limits with the da
 | Dependency | Why | Free tier |
 |---|---|---|
 | `expo-secure-store` (SDK 58, `~58.0.3`) | Keeps the encryption key in Keychain / Keystore | Part of the Expo SDK, free, no account |
+| `expo-crypto` (SDK 58, `~58.0.8`) | `getRandomBytes` makes the 32-byte key. The app has no other secure random source, and `Math.random` must not make a key. Found while applying task 1.3 | Part of the Expo SDK, free, no account |
 
-It is a native module, so the development build must be rebuilt (`npx expo prebuild --platform android` then `npm run android`), as STRUCTURE.md already describes for native changes. No other dependency is added: Zod and `supabase-js` are already installed.
+Both are native modules, so the development build must be rebuilt (`npx expo prebuild --platform android` then `npm run android`), as STRUCTURE.md already describes for native changes. No other dependency is added: Zod and `supabase-js` are already installed.
 
 ## Risks / Trade-offs
 
