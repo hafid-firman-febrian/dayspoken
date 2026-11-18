@@ -1,10 +1,18 @@
-import { Screen, Text } from '@/ui';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
-// Temporary stub: replaced by the real screen from @/features/auth.
-export default function Screen_sign_in() {
+import { SignInScreen } from '@/features/auth';
+
+export default function SignInRoute() {
+  const router = useRouter();
+  // Set when the user comes back from Verify Code to fix a typo.
+  const { email } = useLocalSearchParams<{ email?: string }>();
+
   return (
-    <Screen>
-      <Text variant="title">Sign in</Text>
-    </Screen>
+    <SignInScreen
+      initialEmail={email}
+      onCodeSent={(sentTo, requestedAt) =>
+        router.push({ pathname: '/verify', params: { email: sentTo, sentAt: String(requestedAt) } })
+      }
+    />
   );
 }

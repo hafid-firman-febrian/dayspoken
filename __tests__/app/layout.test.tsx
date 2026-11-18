@@ -91,7 +91,12 @@ describe('the route guard', () => {
       await act(() => router.push('/sign-in'));
       expect(screen).toHavePathname('/sign-in');
 
-      await act(() => router.push('/verify'));
+      await act(() =>
+        router.push({
+          pathname: '/verify',
+          params: { email: 'ada@example.com', sentAt: '1700000000000' },
+        }),
+      );
       expect(screen).toHavePathname('/verify');
     });
 
@@ -154,7 +159,12 @@ describe('the route guard', () => {
     it('moves to the home route after a sign-in, with no way back to the auth screens', async () => {
       await open('/welcome');
       await act(() => router.push('/sign-in'));
-      await act(() => router.push('/verify'));
+      await act(() =>
+        router.push({
+          pathname: '/verify',
+          params: { email: 'ada@example.com', sentAt: '1700000000000' },
+        }),
+      );
 
       await act(async () => mockListener?.('SIGNED_IN', SESSION));
 

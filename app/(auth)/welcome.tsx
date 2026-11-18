@@ -1,10 +1,8 @@
-import { Screen, Text } from '@/ui';
+import { useRouter } from 'expo-router';
 
-// Temporary stub: replaced by the real screen from @/features/auth.
-export default function Screen_welcome() {
-  return (
-    <Screen>
-      <Text variant="title">Welcome</Text>
-    </Screen>
-  );
+import { WelcomeScreen } from '@/features/auth';
+
+export default function WelcomeRoute() {
+  const router = useRouter();
+  return <WelcomeScreen onGetStarted={() => router.push('/sign-in')} />;
 }
