@@ -8,7 +8,7 @@ See `proposal.md` for the why. State of the code today:
 - `src/lib/mmkv.ts` is the only file allowed to import `react-native-mmkv` (ESLint). Its `kvStorage` is a plain, unencrypted, synchronous adapter used for preferences.
 - `app/_layout.tsx` renders `<Stack>` inside `GestureHandlerRootView > ThemeProvider > UiProvider`, after a font gate. `app/index.tsx` is a placeholder. There are no `(auth)` routes and no `src/features/` folder yet.
 - `src/ui` already has `Screen`, `Text`, `Button`, `TextField`, `CodeInput` (6 cells, autofill, `onComplete`), `Banner`, `ErrorState`, and `useToast`. `TextField` and `CodeInput` have error states.
-- `supabase/config.toml` has email OTP on (`otp_length = 6`, `otp_expiry = 3600`, `enable_confirmations = false`), no SMTP block, and `[auth.rate_limit] email_sent = 2` (which only applies once SMTP is on). The local mailbox ("Inbucket") is on port 54424. `handle_new_user` already creates a `profiles` row on `auth.users` insert, so no migration is needed.
+- `supabase/config.toml` has email OTP on (`otp_length = 6`, `otp_expiry = 3600`, `enable_confirmations = false`), no SMTP block, and `[auth.rate_limit] email_sent = 2` (which only applies once SMTP is on). The local mailbox ("Mailpit") is on port 54424. `handle_new_user` already creates a `profiles` row on `auth.users` insert, so no migration is needed.
 - `@tanstack/react-query` is listed in the stack but is **not installed yet**. Expo Router is `~58`, which has `Stack.Protected`.
 - Facts checked against Supabase's docs on 2026-11-18: the built-in email service sends 2 messages per hour and only to members of the project's organization; custom SMTP raises the default to 30 per hour (adjustable); a user can request an OTP once every 60 seconds; `/otp` and `/verify` are limited to 30 requests per 5 minutes per IP; the default OTP lifetime is 1 hour; email OTP uses the Magic Link template.
 
@@ -141,7 +141,7 @@ Two free options, owner's choice, one config block:
 
 Recommendation: start with **Brevo** if the owner has a verified sender, otherwise Gmail, and document both. Either is far above what the demo needs: every Upwork visitor can use "Try the demo" with no email at all.
 
-The committed `supabase/config.toml` gets an `[auth.email.smtp]` block whose `host`, `port`, `user`, `pass`, `admin_email`, and `sender_name` come from `env(...)` references. The values for the **local** stack are not set, so local development keeps using Inbucket (D9). For the **cloud** project, the owner exports the variables in their shell (never in a file under Git) and runs `npx supabase config push --remote`, which applies the auth block, including SMTP, to the cloud project. This keeps "the cloud project is never edited by hand in the dashboard" true. If `config push` cannot carry the SMTP password in the installed CLI version (3.2.0), the fallback is the dashboard's SMTP form, once, noted in the guide. This is verified at apply time (see Open Questions).
+The committed `supabase/config.toml` gets an `[auth.email.smtp]` block whose `host`, `port`, `user`, `pass`, `admin_email`, and `sender_name` come from `env(...)` references. The values for the **local** stack are not set, so local development keeps using Mailpit (D9). For the **cloud** project, the owner exports the variables in their shell (never in a file under Git) and runs `npx supabase config push --remote`, which applies the auth block, including SMTP, to the cloud project. This keeps "the cloud project is never edited by hand in the dashboard" true. If `config push` cannot carry the SMTP password in the installed CLI version (3.2.0), the fallback is the dashboard's SMTP form, once, noted in the guide. This is verified at apply time (see Open Questions).
 
 The guide lives in `docs/auth-email-setup.md` and records the limits with the date they were checked.
 
@@ -151,9 +151,9 @@ The guide lives in `docs/auth-email-setup.md` and records the limits with the da
 
 ### D9. Local development and testing
 
-- **Local sign-in** needs no SMTP: the local stack delivers to Inbucket (`http://127.0.0.1:54424`), where the 6-digit code can be read. The README/guide says so.
+- **Local sign-in** needs no SMTP: the local stack delivers to Mailpit (`http://127.0.0.1:54424`), where the 6-digit code can be read. The README/guide says so.
 - **Jest** tests mock the `api.ts` layer for the screens, and test `errors.ts`, `useResendTimer` (with fake timers and a mocked clock), `AuthProvider` (fake client emitting events), and `session-storage` (MMKV's in-memory mock plus a mocked `expo-secure-store`). The route guard is tested in `__tests__/app/` with a mocked auth state. `expo-secure-store` is mocked in `jest.setup.ts`.
-- **API check** (`npm run db:smoke`) gets one new step: request an OTP for a throwaway address against the local stack, read the code from Inbucket's API, verify it, and confirm that the `profiles` row exists. This covers the part Jest cannot: the real server behavior behind D5 and D6.
+- **API check** (`npm run db:smoke`) gets one new step: request an OTP for a throwaway address against the local stack, read the code from Mailpit's API, verify it, and confirm that the `profiles` row exists. This covers the part Jest cannot: the real server behavior behind D5 and D6.
 - **Manual:** one real sign-in on a device against the cloud project, with an address outside the organization.
 
 ### D10. New dependency

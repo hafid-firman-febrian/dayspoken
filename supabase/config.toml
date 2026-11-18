@@ -203,8 +203,9 @@ password_requirements = ""
 # rp_origins = ["http://127.0.0.1:3000"]
 
 [auth.rate_limit]
-# Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
-email_sent = 2
+# Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled. Supabase's
+# default with custom SMTP is 30; it is written here so the limit is visible and adjustable.
+email_sent = 30
 # Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
 sms_sent = 30
 # Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
@@ -239,26 +240,40 @@ secure_password_change = false
 # they signed in with a one-time password, magic link, or recovery link.
 # require_current_password = true
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
-max_frequency = "1s"
+# The same interval limits a new sign-in code per user, so the app's 60 second resend timer is
+# enforced here too.
+max_frequency = "1m0s"
 # Number of characters used in the email OTP.
 otp_length = 6
-# Number of seconds before the email OTP expires (defaults to 1 hour).
-otp_expiry = 3600
+# Number of seconds before the email OTP expires (defaults to 1 hour). The app mirrors this value
+# as OTP_LIFETIME_SECONDS (src/features/auth/types.ts) to tell an expired code from a wrong one,
+# and a test keeps the two equal. The email template also says "10 minutes".
+otp_expiry = 600
 
-# Use a production-ready SMTP server
+# Sending real email through free SMTP (a Gmail app password or a Brevo account). It stays off
+# here: the local stack delivers to its test mailbox (http://127.0.0.1:54424), so signing in
+# locally needs no SMTP account. For the cloud project, export the variables below in your shell
+# (never in a file under Git), uncomment this block, and run `npx supabase config push --remote`.
+# See docs/auth-email-setup.md. The credentials stay Supabase secrets: only variable names are here.
 # [auth.email.smtp]
 # enabled = true
-# host = "smtp.sendgrid.net"
+# host = "env(SMTP_HOST)"
 # port = 587
-# user = "apikey"
-# pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
+# user = "env(SMTP_USER)"
+# pass = "env(SMTP_PASS)"
+# admin_email = "env(SMTP_FROM_EMAIL)"
+# sender_name = "Dayspoken"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# Sign-in emails show a six digit code, never a link. Email OTP uses the Magic Link template for
+# an address that already has an account and the Confirm signup template for a new one, so both
+# point at the same file.
+[auth.email.template.magic_link]
+subject = "Your Dayspoken code"
+content_path = "./supabase/templates/otp.html"
+
+[auth.email.template.confirmation]
+subject = "Your Dayspoken code"
+content_path = "./supabase/templates/otp.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]

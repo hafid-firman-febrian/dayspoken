@@ -37,6 +37,7 @@ dayspoken/
   supabase/
     config.toml             local stack settings (ports in the 544xx range)
     migrations/             timestamped SQL
+    templates/              email templates (otp.html: the code-only sign-in email)
     tests/
       database/             pgTAP tests: schema, RLS, grants, storage
       api-check.sh          API-level checks against the local stack
@@ -46,7 +47,7 @@ dayspoken/
     seed.sql                demo account data
   scripts/                  db-types.sh (generates and checks the database types)
   e2e/                      Maestro flows
-  docs/                     privacy policy (GitHub Pages), screenshots
+  docs/                     privacy policy (GitHub Pages), screenshots, auth-email-setup.md
   openspec/
 ```
 
@@ -60,12 +61,13 @@ dayspoken/
 | `src/utils/` | Pure functions (dates, `local_date`, formatting) |
 | `supabase/config.toml` | Settings of the local stack. Its ports are in the 544xx range so it can run next to another Supabase project |
 | `supabase/migrations/` | Timestamped SQL migrations |
+| `supabase/templates/` | Email templates for Supabase Auth (the code-only sign-in email) |
 | `supabase/tests/` | `database/` pgTAP tests and `api-check.sh` for rules only the running API enforces |
 | `supabase/functions/` | Edge Functions (Deno). `_shared/` holds the AI adapter, quota logic, error codes, and the generated `database.types.ts` |
 | `supabase/seed.sql` | Data for the demo account |
 | `scripts/` | Small shell scripts behind npm scripts (`db-types.sh`) |
 | `e2e/` | Maestro end-to-end flows |
-| `docs/` | Privacy policy (served by GitHub Pages) and screenshots |
+| `docs/` | Privacy policy (served by GitHub Pages), screenshots, and `auth-email-setup.md` (the SMTP guide) |
 | `openspec/` | OpenSpec config, specs, and changes |
 
 ### Routes and screens
@@ -216,6 +218,8 @@ The app shows the answer with source cards that open the cited entries.
   - Every variable is documented in `.env.example`. Local `.env` and `.env*.local` files are not committed.
   - **Supabase:** `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, both or neither. The key must be a publishable key (`sb_publishable_...`). A secret key (`sb_secret_...`) or the legacy `anon` key is refused with an error that never repeats the key, and production needs an `https` URL. An Android emulator reaches the computer at `10.0.2.2`, not `127.0.0.1`.
 - **Secrets live only as Supabase secrets** (Gemini key, SMTP credentials).
+  - **Sign-in email.** Supabase's built-in email is for testing only (2 messages per hour, organization members only), so the cloud project sends the sign-in code through free SMTP (a Gmail app password or Brevo). The committed `supabase/config.toml` keeps the `[auth.email.smtp]` block commented out and refers to the credentials only as `env(SMTP_...)` names. The owner exports the values in their own shell and runs `npx supabase config push` (see `docs/auth-email-setup.md`). The local stack needs no SMTP: it delivers to Mailpit (<http://127.0.0.1:54424>).
+  - **The code.** Six digits, valid 10 minutes (`otp_expiry = 600`), one new code per address per minute. The app mirrors the lifetime as `OTP_LIFETIME_SECONDS`, and a test keeps it equal to `config.toml`. The email shows the code and no link, for new and existing addresses alike (`supabase/templates/otp.html`).
 - **AI config.** All AI calls go through the AI adapter in `supabase/functions/_shared/ai-adapter/`. It is configured per environment: the provider, plus a model per task (`process-entry` and `ask` separately).
 - **Separate projects.** Development and production use separate Google projects, because AI limits are per project.
 - **Embeddings always come from one model.** Vectors from different models cannot be compared.
@@ -263,7 +267,7 @@ The app shows the answer with source cards that open the cited entries.
 - **Native libraries in Jest** are mocked in `jest.setup.ts` (gesture handler, Reanimated, fonts, splash screen, Nitro). MMKV has its own in-memory mock.
 - **Route tests are the exception.** Expo Router treats every file in `app/` as a route, so route tests live in `__tests__/app/` and mirror the route path (`__tests__/app/index.test.tsx`).
 - **Database tests:** pgTAP tests in `supabase/tests/database/`, run by `npm run db:test` against the local stack. They cover constraints, defaults, triggers, grants, RLS per role (`set local role`), the audio bucket, and the functions callable by `anon`. Each file creates its own users and rolls back.
-- **API checks:** `npm run db:smoke` (`supabase/tests/api-check.sh`) calls the real local API for the rules that SQL cannot show: bucket size and type limits, signed link expiry, the public URL refusal, anonymous access, and `ping`. It creates two throwaway users and removes them.
+- **API checks:** `npm run db:smoke` (`supabase/tests/api-check.sh`) calls the real local API for the rules that SQL cannot show: bucket size and type limits, signed link expiry, the public URL refusal, anonymous access, `ping`, and email sign-in (a six digit code in a code-only email, a wrong code, the 60 second resend limit, and the profile row of a new user; it reads the code from the local test mailbox). It creates throwaway users and removes them.
 - **Edge Functions:** Deno tests.
 - **End-to-end:** Maestro flows live in `e2e/`.
 - **Check scripts:**
@@ -272,7 +276,7 @@ The app shows the answer with source cards that open the cited entries.
   - `npm test`: Jest.
   - `npm run format`: rewrites files with Prettier. Markdown docs and `openspec/` are not formatted.
   - `npm run db:start`, `db:stop`, `db:reset`, `db:test`, `db:smoke`, `db:types`, `db:types:check`: the local backend (they need Docker).
-- **CI:** GitHub Actions runs typecheck, lint, and tests on every pull request to `main` and every push to `main`, with the Node version from `.nvmrc`. A second workflow, `database.yml`, runs only when `supabase/**` (or `package-lock.json`) changes: it starts the local stack, replays every migration, runs the database tests and the API checks, and fails when the generated types are stale. It uses no secret and no cloud project. CI must be green before merging.
+- **CI:** GitHub Actions runs typecheck, lint, and tests on every pull request to `main` and every push to `main`, with the Node version from `.nvmrc`. A second workflow, `database.yml`, runs only when `supabase/**` (or `package-lock.json`) changes: it starts the local stack (with its mail service, because the API checks read the sign-in code from it), replays every migration, runs the database tests and the API checks, and fails when the generated types are stale. It uses no secret and no cloud project. CI must be green before merging.
 
 ## Naming conventions
 
