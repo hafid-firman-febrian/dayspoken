@@ -1,12 +1,16 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
+import { useSignOut } from '@/features/auth';
 import { env } from '@/lib/env';
 import { Button, Screen, Text } from '@/ui';
 
-// Temporary placeholder. Replaced by the auth and app-shell changes.
+// Temporary placeholder for the signed-in area. The app-shell change replaces it, and the
+// "Sign out" button is temporary too: add-settings-account moves it into Settings and deletes it
+// from here.
 export default function IndexScreen() {
   const router = useRouter();
+  const { signOut, isSigningOut } = useSignOut();
 
   return (
     <Screen>
@@ -16,8 +20,11 @@ export default function IndexScreen() {
         <Text variant="caption" tone="muted">
           Environment: {env.appEnv}
         </Text>
+        <View className="pt-4">
+          <Button label="Sign out" variant="secondary" loading={isSigningOut} onPress={signOut} />
+        </View>
         {__DEV__ ? (
-          <View className="pt-4">
+          <View className="pt-2">
             <Button
               label="Component gallery"
               variant="secondary"

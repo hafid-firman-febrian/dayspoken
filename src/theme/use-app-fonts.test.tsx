@@ -57,4 +57,22 @@ describe('useAppFonts', () => {
     const { result } = await renderHook(() => useAppFonts());
     expect(result.current).toBe(true);
   });
+
+  it('keeps the splash screen up while it is held, even when the fonts are ready', async () => {
+    mockUseFonts.mockReturnValue([true, null]);
+    const { result } = await renderHook(() => useAppFonts({ hold: true }));
+    expect(result.current).toBe(true);
+    expect(hideAsync).not.toHaveBeenCalled();
+  });
+
+  it('hides the splash screen once, when the hold is released', async () => {
+    mockUseFonts.mockReturnValue([true, null]);
+    const { rerender } = await renderHook(({ hold }: { hold: boolean }) => useAppFonts({ hold }), {
+      initialProps: { hold: true },
+    });
+    expect(hideAsync).not.toHaveBeenCalled();
+
+    await rerender({ hold: false });
+    expect(hideAsync).toHaveBeenCalledTimes(1);
+  });
 });
