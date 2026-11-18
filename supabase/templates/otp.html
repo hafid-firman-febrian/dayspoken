@@ -1,0 +1,74 @@
+<!-- Sign-in code email. Used for both Supabase templates (Magic Link for an existing address,
+     Confirm signup for a new one), so everybody gets the same email: a code, never a link.
+     Mail clients ignore CSS variables and dark-mode tokens, so the styles are inline and the
+     colors are the light "Tomato" tokens from src/theme/tokens.ts, copied as fixed values. This is the one file where hex colors are fine: it is not app UI.
+     The 10 minutes below must match otp_expiry in supabase/config.toml (600 seconds). -->
+<!doctype html>
+<html lang="en">
+  <body style="margin: 0; padding: 0; background-color: #f8f6f5">
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background-color: #f8f6f5"
+    >
+      <tr>
+        <td align="center" style="padding: 32px 16px">
+          <table
+            role="presentation"
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            style="max-width: 440px; background-color: #ffffff; border-radius: 16px"
+          >
+            <tr>
+              <td
+                style="
+                  padding: 32px 28px;
+                  font-family:
+                    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+                    sans-serif;
+                  color: #1a1210;
+                "
+              >
+                <p style="margin: 0 0 8px; font-size: 15px; font-weight: 600; color: #cc3f27">
+                  Dayspoken
+                </p>
+                <h1 style="margin: 0 0 12px; font-size: 22px; line-height: 28px; font-weight: 600">
+                  Your sign-in code
+                </h1>
+                <p style="margin: 0 0 20px; font-size: 15px; line-height: 22px">
+                  Enter this code in the app to sign in.
+                </p>
+                <p
+                  style="
+                    margin: 0 0 20px;
+                    padding: 16px;
+                    background-color: #f8f6f5;
+                    border-radius: 12px;
+                    text-align: center;
+                    font-size: 32px;
+                    line-height: 40px;
+                    font-weight: 700;
+                    letter-spacing: 8px;
+                    font-family: 'SFMono-Regular', Menlo, Consolas, monospace;
+                  "
+                >
+                  {{ .Token }}
+                </p>
+                <p style="margin: 0 0 8px; font-size: 14px; line-height: 20px; color: #6e6460">
+                  This code works for 10 minutes. Asking for a new code makes this one stop working.
+                </p>
+                <p style="margin: 0; font-size: 14px; line-height: 20px; color: #6e6460">
+                  If you did not ask for this code, you can ignore this email. Nobody can sign in
+                  without it.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

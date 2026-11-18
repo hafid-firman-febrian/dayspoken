@@ -3,10 +3,12 @@
 #   - bucket size and type limits
 #   - audio upload, signed links (and their expiry), and the public URL refusal
 #   - anonymous access over HTTP, and the one function an anonymous visitor may call (ping)
+#   - email sign-in: a six digit code in a code-only email, wrong code, resend limit, and the
+#     profile row of a new user (it reads the code from the local test mailbox, Mailpit)
 #
 # Runs against the LOCAL stack (npm run db:start). It reads the URL and keys from
-# `supabase status`, so no key is stored anywhere. It creates two throwaway users and
-# removes them (and their files) when it ends.
+# `supabase status`, so no key is stored anywhere. It creates throwaway users and
+# removes them (and their files and test emails) when it ends.
 #
 #   npm run db:smoke
 set -uo pipefail
@@ -42,6 +44,9 @@ cleanup() {
     [ -n "$id" ] && curl -s -o /dev/null -X DELETE "$API_URL/auth/v1/admin/users/$id" \
       -H "apikey: $SECRET_KEY"
   done
+  if [ -n "${OTP_EMAIL:-}" ] && [ -n "${MAILPIT_URL:-}" ]; then
+    curl -s -o /dev/null -X DELETE "$MAILPIT_URL/api/v1/search?query=to:$OTP_EMAIL"
+  fi
   rm -rf "$WORK"
 }
 trap cleanup EXIT
@@ -173,6 +178,85 @@ expect_status "a helper function is not exposed as an API endpoint" \
   "$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API_URL/rest/v1/rpc/tags_are_valid" \
       -H "apikey: $PUBLISHABLE_KEY" -H "Content-Type: application/json" -d '{"tags":[]}')" "404"
 
+
+echo "Email sign-in code"
+if [ -z "${MAILPIT_URL:-}" ]; then
+  fail "the local mail service is not running (no MAILPIT_URL), so the sign-in code cannot be read"
+else
+  OTP_EMAIL="api-check-otp-$RUN_ID@example.test"
+
+  # Wait (up to about 10 s) for the email to reach the test mailbox, and print its id.
+  wait_for_mail() {
+    local id="" tries=0
+    while [ -z "$id" ] && [ "$tries" -lt 20 ]; do
+      id="$(curl -s "$MAILPIT_URL/api/v1/search?query=to:$OTP_EMAIL" | jq -r '.messages[0].ID // empty')"
+      [ -z "$id" ] && { sleep 0.5; tries=$((tries + 1)); }
+    done
+    echo "$id"
+  }
+
+  otp_request() {
+    curl -s -w '\n%{http_code}' -X POST "$API_URL/auth/v1/otp" -H "apikey: $PUBLISHABLE_KEY" \
+      -H "Content-Type: application/json" -d "{\"email\":\"$OTP_EMAIL\",\"create_user\":true}"
+  }
+
+  otp_verify() {
+    curl -s -w '\n%{http_code}' -X POST "$API_URL/auth/v1/verify" -H "apikey: $PUBLISHABLE_KEY" \
+      -H "Content-Type: application/json" \
+      -d "{\"type\":\"email\",\"email\":\"$OTP_EMAIL\",\"token\":\"$1\"}"
+  }
+
+  REQ="$(otp_request)"
+  expect_status "a code is requested for a new address" "$(echo "$REQ" | tail -n1)" "200"
+
+  MAIL_ID="$(wait_for_mail)"
+  if [ -z "$MAIL_ID" ]; then
+    fail "no sign-in email reached the test mailbox"
+  else
+    # Lines are joined: the formatter may put the code on its own line between the tags.
+    MAIL_HTML="$(curl -s "$MAILPIT_URL/api/v1/message/$MAIL_ID" | jq -r '.HTML' | tr '\n' ' ')"
+    # The code sits alone between two tags: >123456<
+    CODE="$(echo "$MAIL_HTML" | grep -oE '>[[:space:]]*[0-9]{6}[[:space:]]*<' | grep -oE '[0-9]{6}' | head -n1)"
+    if [ -n "$CODE" ]; then pass "the email holds a six digit code"; else fail "the email holds no six digit code"; fi
+    if echo "$MAIL_HTML" | grep -qiE '<a[[:space:]>]|href='; then
+      fail "the email holds a link (it must hold only the code)"
+    else
+      pass "the email holds no link"
+    fi
+
+    # The new user exists as soon as the code is requested: remember it for the cleanup.
+    OTP_USER_ID="$(curl -s "$API_URL/auth/v1/admin/users?per_page=200" -H "apikey: $SECRET_KEY" \
+      | jq -r --arg e "$OTP_EMAIL" '.users[]? | select(.email == $e) | .id' | head -n1)"
+    [ -n "$OTP_USER_ID" ] && USER_IDS+=("$OTP_USER_ID")
+
+    expect_status "asking again within 60 seconds is refused" "$(otp_request | tail -n1)" "429"
+
+    WRONG="000000"; [ "$CODE" = "$WRONG" ] && WRONG="111111"
+    BAD="$(otp_verify "$WRONG")"
+    expect_status "a wrong code is refused" "$(echo "$BAD" | tail -n1)" "4[0-9][0-9]"
+    if [ "$(echo "$BAD" | sed '$d' | jq -r '.error_code // empty')" = "otp_expired" ]; then
+      pass "a wrong code answers otp_expired (the same answer as an expired one, so the app tells them apart by time)"
+    else
+      fail "a wrong code did not answer otp_expired: $(echo "$BAD" | sed '$d')"
+    fi
+
+    GOOD="$(otp_verify "$CODE")"
+    expect_status "the right code is accepted" "$(echo "$GOOD" | tail -n1)" "200"
+    OTP_TOKEN="$(echo "$GOOD" | sed '$d' | jq -r '.access_token // empty')"
+    OTP_SESSION_USER="$(echo "$GOOD" | sed '$d' | jq -r '.user.id // empty')"
+    if [ -n "$OTP_TOKEN" ]; then pass "the right code gives a session"; else fail "the right code gave no session"; fi
+
+    PROFILE="$(curl -s "$API_URL/rest/v1/profiles?select=id" -H "apikey: $PUBLISHABLE_KEY" \
+      -H "Authorization: Bearer $OTP_TOKEN" | jq -r '.[0].id // empty')"
+    if [ -n "$PROFILE" ] && [ "$PROFILE" = "$OTP_SESSION_USER" ]; then
+      pass "a profile row exists for the new user right after the first sign-in"
+    else
+      fail "no profile row for the new user"
+    fi
+
+    expect_status "the same code cannot be used twice" "$(otp_verify "$CODE" | tail -n1)" "4[0-9][0-9]"
+  fi
+fi
 echo
 if [ "$FAILURES" -eq 0 ]; then
   echo "All API checks passed."

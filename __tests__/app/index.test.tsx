@@ -1,8 +1,14 @@
-import { screen } from '@testing-library/react-native';
+import { fireEvent, screen } from '@testing-library/react-native';
 
+import { useSignOut } from '@/features/auth';
 import { renderWithProviders } from '@/ui/test-utils';
 
 import IndexScreen from '../../app/index';
+
+jest.mock('@/features/auth', () => ({ useSignOut: jest.fn() }));
+
+const mockSignOut = jest.fn();
+const mockUseSignOut = jest.mocked(useSignOut);
 
 const setDev = (value: boolean) => {
   (globalThis as unknown as { __DEV__: boolean }).__DEV__ = value;
@@ -10,7 +16,30 @@ const setDev = (value: boolean) => {
 
 describe('IndexScreen', () => {
   const originalDev = (globalThis as unknown as { __DEV__: boolean }).__DEV__;
+  beforeEach(() => {
+    mockSignOut.mockClear();
+    mockUseSignOut.mockReturnValue({ signOut: mockSignOut, isSigningOut: false });
+  });
   afterEach(() => setDev(originalDev));
+
+  it('has a temporary Sign out button that signs the user out', async () => {
+    await renderWithProviders(<IndexScreen />);
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Sign out' }));
+
+    expect(mockSignOut).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows the Sign out button as busy, and ignores a press, while it works', async () => {
+    mockUseSignOut.mockReturnValue({ signOut: mockSignOut, isSigningOut: true });
+    await renderWithProviders(<IndexScreen />);
+
+    const button = screen.getByRole('button', { name: 'Sign out', busy: true });
+    expect(button).toBeOnTheScreen();
+    await fireEvent.press(button);
+
+    expect(mockSignOut).not.toHaveBeenCalled();
+  });
 
   it('shows the app name and the placeholder text', async () => {
     await renderWithProviders(<IndexScreen />);

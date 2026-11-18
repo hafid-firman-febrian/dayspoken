@@ -14,18 +14,22 @@ SplashScreen.preventAutoHideAsync().catch(() => {
  * Loads Geist and hides the splash screen when it is done. Returns true when the app can
  * render: the fonts loaded, or loading failed (then the app opens in the system font
  * instead of hanging on the splash screen).
+ *
+ * `hold` keeps the splash screen up even when the fonts are ready, for something else the first
+ * screen needs (the root layout holds it until the saved sign-in session has been read). It is
+ * off by default, and it only delays hiding: the return value is about the fonts alone.
  */
-export function useAppFonts(): boolean {
+export function useAppFonts({ hold = false }: { hold?: boolean } = {}): boolean {
   const [loaded, error] = useFonts(GEIST_FONTS);
   const ready = loaded || error !== null;
 
   useEffect(() => {
-    if (ready) {
+    if (ready && !hold) {
       SplashScreen.hideAsync().catch(() => {
         // Already hidden: nothing to do.
       });
     }
-  }, [ready]);
+  }, [ready, hold]);
 
   return ready;
 }

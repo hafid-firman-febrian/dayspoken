@@ -27,3 +27,30 @@ jest.mock('@gorhom/bottom-sheet', () => require('@gorhom/bottom-sheet/mock'));
 jest.mock('react-native-nitro-modules', () => ({
   NitroModules: { createHybridObject: jest.fn() },
 }));
+
+// expo-secure-store is native (Keychain / Keystore). This in-memory version has the same
+// synchronous getItem/setItem the session storage uses. Its store is shared by a test file,
+// so a test that cares clears it with `__reset()`.
+jest.mock('expo-secure-store', () => {
+  const store = new Map<string, string>();
+  return {
+    getItem: jest.fn((key: string) => store.get(key) ?? null),
+    setItem: jest.fn((key: string, value: string) => {
+      store.set(key, value);
+    }),
+    deleteItemAsync: jest.fn(async (key: string) => {
+      store.delete(key);
+    }),
+    __reset: () => store.clear(),
+  };
+});
+
+// expo-crypto is native. Tests only need random bytes, which Node can give.
+jest.mock('expo-crypto', () => {
+  const { randomBytes } = jest.requireActual('node:crypto') as {
+    randomBytes: (count: number) => Uint8Array;
+  };
+  return {
+    getRandomBytes: jest.fn((count: number) => new Uint8Array(randomBytes(count))),
+  };
+});

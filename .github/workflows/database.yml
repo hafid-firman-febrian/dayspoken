@@ -49,10 +49,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Only the services the checks use. Studio, mail, logs, edge functions, realtime, image
-      # transforms, and the pooler are left out to save time and memory.
+      # Only the services the checks use. Studio, logs, edge functions, realtime, image
+      # transforms, and the pooler are left out to save time and memory. The mail service stays:
+      # the API checks read the sign-in code from its test mailbox.
       - name: Start the local Supabase stack
-        run: npx supabase start -x studio,mailpit,logflare,vector,edge-runtime,realtime,imgproxy,supavisor
+        run: npx supabase start -x studio,logflare,vector,edge-runtime,realtime,imgproxy,supavisor
 
       - name: Replay every migration from empty
         run: npm run db:reset
