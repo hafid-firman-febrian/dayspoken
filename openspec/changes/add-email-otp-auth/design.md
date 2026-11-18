@@ -141,7 +141,9 @@ Two free options, owner's choice, one config block:
 
 Recommendation: start with **Brevo** if the owner has a verified sender, otherwise Gmail, and document both. Either is far above what the demo needs: every Upwork visitor can use "Try the demo" with no email at all.
 
-The committed `supabase/config.toml` gets an `[auth.email.smtp]` block whose `host`, `port`, `user`, `pass`, `admin_email`, and `sender_name` come from `env(...)` references. The values for the **local** stack are not set, so local development keeps using Mailpit (D9). For the **cloud** project, the owner exports the variables in their shell (never in a file under Git) and runs `npx supabase config push --remote`, which applies the auth block, including SMTP, to the cloud project. This keeps "the cloud project is never edited by hand in the dashboard" true. If `config push` cannot carry the SMTP password in the installed CLI version (3.2.0), the fallback is the dashboard's SMTP form, once, noted in the guide. This is verified at apply time (see Open Questions).
+The committed `supabase/config.toml` gets an `[auth.email.smtp]` block whose `host`, `port`, `user`, `pass`, `admin_email`, and `sender_name` come from `env(...)` references. The values for the **local** stack are not set, so local development keeps using Mailpit (D9). The block stays commented out and only documents the variable names. For the **cloud** project the original plan was `supabase config push`. Applying it showed that it is not usable here: a `config diff` against the real project listed 22 differences, because `config push` sends every declared property and cannot send only some. Besides unrelated values it would have turned **email confirmation off** in production (the cloud has it on, the local file off for development), which lets someone create an account with another person's address and a password. The cloud also defaulted to **8 digit** codes, which the app cannot take. So the cloud settings (SMTP, code length 6, lifetime 600, and the Confirm sign up and Magic link templates) are set once by hand in the dashboard, and email confirmation stays on. `docs/auth-email-setup.md` has the steps. The password is typed into the dashboard, which stores it encrypted.
+
+Consequence for the cloud flow: with confirmation on, a **new** address receives the Confirm sign up email and an existing one the Magic link email, so both templates carry the code (this was already the plan in D6). Entering the code confirms and signs the user in, with no extra step for the user.
 
 The guide lives in `docs/auth-email-setup.md` and records the limits with the date they were checked.
 
@@ -181,12 +183,11 @@ Both are native modules, so the development build must be rebuilt (`npx expo pre
 
 1. Merge the branch (app code, `config.toml`, templates, docs, API check). No SQL migration, so `database.yml` runs only because `supabase/**` changes, and it must stay green.
 2. Rebuild the development build (a new native module).
-3. Cloud project (owner, once): create the SMTP account, export the variables, run `npx supabase config push --remote`, then sign in once with an outside address.
-4. Rollback: revert the merge. Signed-in users on devices lose nothing server-side; the encrypted store is simply unused. The cloud auth settings can be reverted by pushing the previous `config.toml`.
+3. Cloud project (owner, once): create the SMTP account, then set SMTP, code length, code lifetime, and the two templates in the dashboard (`docs/auth-email-setup.md`), then sign in once with an outside address.
+4. Rollback: revert the merge. Signed-in users on devices lose nothing server-side; the encrypted store is simply unused. The cloud auth settings are reverted by hand in the dashboard (turn custom SMTP off, set the code length back).
 
 ## Open Questions
 
-- Can `supabase config push --remote` (CLI 3.2.0) apply the SMTP password from an environment variable? If not, the SMTP form is filled in once in the dashboard. This changes only the guide, not the code or specs.
 - Which provider the owner chooses (Brevo or Gmail). Both are documented; the choice affects only the cloud secrets.
 - Exact Brevo and Gmail daily limits on the day of apply. They are recorded in `docs/auth-email-setup.md` with the date.
 

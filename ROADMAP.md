@@ -170,7 +170,7 @@ Out of scope: auth screens and SMTP (add-email-otp-auth); Edge Functions (add-ai
 
 - [x] Proposed
 - [x] Reviewed
-- [ ] Applied
+- [x] Applied
 - [ ] Archived
 
 **Scope:** Welcome, Sign In, and Verify Code screens with Supabase email OTP through free SMTP, a secure session, a routing guard, and sign out.

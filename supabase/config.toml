@@ -252,9 +252,9 @@ otp_expiry = 600
 
 # Sending real email through free SMTP (a Gmail app password or a Brevo account). It stays off
 # here: the local stack delivers to its test mailbox (http://127.0.0.1:54424), so signing in
-# locally needs no SMTP account. For the cloud project, export the variables below in your shell
-# (never in a file under Git), uncomment this block, and run `npx supabase config push --remote`.
-# See docs/auth-email-setup.md. The credentials stay Supabase secrets: only variable names are here.
+# locally needs no SMTP account. The cloud project's SMTP is set in the Supabase dashboard, not
+# with `supabase config push`, which would also overwrite unrelated cloud settings (see
+# docs/auth-email-setup.md). This block only documents the settings; no credential is ever here.
 # [auth.email.smtp]
 # enabled = true
 # host = "env(SMTP_HOST)"

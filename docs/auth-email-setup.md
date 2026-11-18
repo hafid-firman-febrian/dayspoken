@@ -49,25 +49,29 @@ Either one is far more than a portfolio demo needs, and "Try the demo" will let 
    - password: the SMTP key
    - from address: the verified sender
 
-## Send the settings to the cloud project (owner steps)
+## Set it up in the cloud project (owner steps, in the dashboard)
 
-The SMTP password is a secret. It must never be in a file under Git, a workflow, or a chat. Type it only in your own terminal.
+The SMTP password is a secret. It must never be in a file under Git, a workflow, or a chat. Type it only in the Supabase dashboard, which stores it encrypted.
 
-1. **Link the project** (once; skip if you already did it for the database): `npx supabase link --project-ref <project-ref>`. It asks for the database password.
-2. **Put the settings in your shell**, not in a file. `read -rs` hides what you type:
+**Why the dashboard and not `supabase config push`.** `config push` sends **every** auth property that `supabase/config.toml` declares, and it cannot send only some of them. A `config diff` against the real cloud project (2026-11-18) showed 22 differences. Most had nothing to do with sign-in, and one was a security downgrade: the cloud has email confirmation **on** (`enable_confirmations = true`) while the local file has it off, which is convenient for local development but must not reach production. The same diff showed that a new cloud project sends **8 digit** codes by default, while the app takes 6. So the settings below are set by hand, once. `config.toml` stays the reference for the local stack and for what the cloud should hold.
 
-   ```bash
-   export SMTP_HOST=smtp.gmail.com          # or smtp-relay.brevo.com
-   export SMTP_USER=you@example.com         # Gmail address, or the Brevo SMTP login
-   export SMTP_FROM_EMAIL=you@example.com   # the address the emails come from
-   read -rs SMTP_PASS && export SMTP_PASS   # paste the app password or SMTP key, press Enter
-   ```
+Open the project in the Supabase dashboard, then Authentication.
 
-3. **Turn the SMTP block on** in `supabase/config.toml`: remove the `#` from the `[auth.email.smtp]` block (it reads the four variables above). **Do not commit this change**: the committed file keeps the block commented out so the local stack keeps using Mailpit.
-4. **Preview what will change**: `npx supabase config diff`. Read it. `config push` sends **every auth property the file declares**, not only the SMTP ones, including values meant for the local stack (for example `site_url`). Sign-in by code uses no link, so these do not affect users, but you should know. Stop here and ask if the diff shows something you do not expect.
-5. **Push**: `npx supabase config push`. It shows the diff again and asks once (the default answer is no). It uses the linked project; `--remote=<ref>` targets another one.
-6. **Check the password arrived.** In the Supabase dashboard open Authentication, Emails, SMTP Settings. It should show custom SMTP **enabled** with your host and sender. If the host is there but the password is empty, `config push` did not carry the `env(...)` value: type the password into that form once, in the dashboard. The rest of the settings stay in `config.toml`.
-7. **Put the block back to commented** in `supabase/config.toml` (`git restore supabase/config.toml` if that was your only change). Properties a file does not declare are left unchanged, so SMTP stays on in the cloud.
+1. **SMTP.** Open Emails, then SMTP Settings. Turn on **Enable custom SMTP** and fill in:
+
+   | Field | Gmail | Brevo |
+   |---|---|---|
+   | Sender email address | the Gmail address | the verified sender |
+   | Sender name | `Dayspoken` | `Dayspoken` |
+   | Host | `smtp.gmail.com` | `smtp-relay.brevo.com` |
+   | Port number | `465` | `587` |
+   | Username | the full Gmail address | the SMTP login |
+   | Password | the 16 character app password, no spaces | the SMTP key |
+
+   Save. The password is hidden afterwards ("Stored password is hidden"). To change it, type a new one. The dashboard shows a yellow note that Gmail is meant for personal email: that is only a warning about deliverability.
+2. **Code length and lifetime.** Open Sign In / Providers, then Email. Set **Email OTP Length** to `6` and **Email OTP Expiration** to `600` (seconds). Save.
+3. **Email templates.** Open Emails, then Templates. Do the same for **Confirm sign up** and **Magic link**: set the subject to `Your Dayspoken code`, and replace the message body with the contents of `supabase/templates/otp.html` (on a Mac: `pbcopy < supabase/templates/otp.html`, then paste). The body must hold `{{ .Token }}` and no `{{ .ConfirmationURL }}`. Both templates need it: the cloud project has email confirmation on, so a **new** address gets the Confirm sign up email and an **existing** one gets the Magic link email.
+4. **Leave email confirmation on** (Sign In / Providers, Email, Confirm email). Do not copy the local `false` to the cloud.
 
 ## Test with a real address
 
@@ -80,7 +84,7 @@ If the email never arrives: look at Authentication, Logs in the dashboard, and s
 
 ## What the project configures for sign-in
 
-All of this lives in `supabase/config.toml` and the email in `supabase/templates/otp.html`:
+For the local stack this lives in `supabase/config.toml` and the email in `supabase/templates/otp.html`. The cloud project holds the same values, set by hand in the dashboard (see above):
 
 | Setting | Value | Why |
 |---|---|---|

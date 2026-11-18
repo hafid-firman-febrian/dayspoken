@@ -39,7 +39,7 @@ This change implements ROADMAP.md entry **4. add-email-otp-auth** and stays with
 - **App code:** new `src/features/auth/` (screens' components, hooks, `api.ts`, `types.ts`, `index.ts`); new routes `app/(auth)/welcome.tsx`, `sign-in.tsx`, `verify.tsx` and an `app/(auth)/_layout.tsx`; `app/_layout.tsx` gains the auth provider and the guard; `app/index.tsx` gets a temporary "Sign out" button; `src/lib/supabase.ts` turns session persistence on; a new session-storage adapter in `src/lib` (and a small extension of `src/lib/mmkv.ts`, the only file that may import MMKV).
 - **Dependencies:** `expo-secure-store` (Expo SDK 58, free). This needs a native rebuild of the development build.
 - **Backend:** `supabase/config.toml` (OTP expiry, resend interval, rate limit, SMTP block that reads secrets from environment variables) and `supabase/templates/` (the code-only email template). No schema migration, no new table: the existing `handle_new_user` trigger already creates the profile row when the auth user is created.
-- **Cloud project:** the owner sets the SMTP credentials as Supabase secrets and pushes the auth config with `npx supabase config push --remote`. This is a manual step documented in `docs/`.
+- **Cloud project:** the owner sets the SMTP credentials, the code length and lifetime, and the two email templates by hand in the Supabase dashboard (`supabase config push` would overwrite unrelated cloud settings). This is a manual step documented in `docs/`.
 - **Docs:** `STRUCTURE.md` (auth feature, session storage, SMTP), `ROADMAP.md` (tick the boxes during apply).
 - **Does not change** `openspec/config.yaml` or any agreed decision. Email OTP through free SMTP and a "Try the demo" button are already agreed.
 

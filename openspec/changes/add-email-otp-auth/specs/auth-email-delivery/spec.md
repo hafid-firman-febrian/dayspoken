@@ -106,7 +106,7 @@ The backend SHALL allow at least 30 sign-in emails per hour for the whole projec
 
 ### Requirement: Setup is documented and repeatable
 
-The repository SHALL contain a short guide that gets the owner from nothing to working sign-in emails in the cloud project: creating the SMTP account, the app password or API key, setting the secrets, pushing the auth configuration, and testing with a real address. It SHALL warn that the built-in email works only for the organization's members.
+The repository SHALL contain a short guide that gets the owner from nothing to working sign-in emails in the cloud project: creating the SMTP account, the app password or API key, entering the credentials, setting the code length, lifetime, and email templates, and testing with a real address. It SHALL warn that the built-in email works only for the organization's members.
 
 #### Scenario: Following the guide
 

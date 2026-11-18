@@ -46,7 +46,7 @@
 - [x] 6.1 Run `npm run typecheck`, `npm run lint`, and `npm test`. Verify: all three pass with no warnings introduced by this change.
 - [x] 6.2 Run `npm run db:reset`, `npm run db:test`, `npm run db:smoke`, and `npm run db:types:check` against the local stack. Verify: all pass, including the new OTP step from 2.4.
 - [x] 6.3 Manual run on a device or emulator with the local stack: new address, existing address, wrong code, expired code (wait past 10 minutes or temporarily set a short lifetime locally and revert), resend before and after 60 seconds, offline while sending and while verifying, airplane-mode sign out, force-quit and relaunch (stays signed in, no Welcome flash), and sign out. Verify: each case behaves as the specs say; note any gap in the PR description.
-- [ ] 6.4 Owner step on the cloud project: create the SMTP account, follow `docs/auth-email-setup.md`, push the auth config, and sign in with an address outside the organization. Verify: the code arrives and signs in; record the provider and the date in the PR description.
+- [x] 6.4 Owner step on the cloud project: create the SMTP account, follow `docs/auth-email-setup.md` (set in the dashboard: `config push` would overwrite unrelated cloud settings), and sign in with an address outside the organization. Verify: the code arrives and signs in; record the provider and the date in the PR description.
 - [x] 6.5 Add to the propose prompt of `add-settings-account` in `ROADMAP.md` that it removes the temporary "Sign out" button from the home placeholder, and to `add-demo-account` that it replaces the "Try the demo" placeholder. Verify: both prompts in `ROADMAP.md` mention it.
 
 ## Workflow follow-up
